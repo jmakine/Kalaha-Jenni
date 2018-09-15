@@ -6,11 +6,10 @@
 package newpackage;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 /**
- *
+ * käyttis
  * @author Jenni
  */
 public class Gui extends JFrame {
@@ -29,6 +28,9 @@ public class Gui extends JFrame {
     private Board lauta;
     private Main ohjelma;
 
+    /**
+     * konstuktori
+     */
     public Gui() {
 
         //ikkuna ilmestyy kuvaruudun keskelle
@@ -57,7 +59,11 @@ public class Gui extends JFrame {
         this.setVisible(true);
     }
 
+      
+    
+    /*
     public static void main(String[] args) {
         new Gui();
-    }
+    } */
+
 }
