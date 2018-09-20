@@ -9,37 +9,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Luokka Board suorittaa siirrot annetuilla parametreilla ja päivittää
- * pelilaudan. Tässä luokassa on myös pelin kannalta oleellinen
- * minimax-algoritmi, jonka avulla tietokoneen paras mahdollinen siirto kullekin
- * tilanteelle saadaan laskettua.
+ * Luokassa Board on siirtojen suoritus sekä mahdollisten siirtojen simulointi.
+ * Oikeat siirrot päivittävät varsinaisen pelilaudan asetelman, simuloiva siirto
+ * päivittää väliaikaista "temp"-Boardia. Pelilaudan toiminnallisuus sääntöineen
+ * on tässä luokassa, kuten myös pelin kannalta oleellinen minimax-algoritmi,
+ * jonka avulla tietokoneen paras mahdollinen siirto kullekin tilanteelle
+ * saadaan laskettua.
  *
  * @version 1.0.
  * @author Jenni
  */
 public class Board {
 
+    //int turn;
     int[] lauta;
+    int viimeinenKiviInd;
+    boolean uusiVuoro;
+    Board temp;
+    int pistetilanne;
 
     /**
-     *
+     * Pelaaja 1 on aina ihminen.
      */
     public static final int HUMAN = 1;
 
     /**
-     *
+     * Pelaaja 2 on aina tietokone.
      */
     public static final int COMPUTER = 2;
 
-    /**
-     *
-     */
-    public int koneenSiirto;
-
+    
 //------------ASETTAA LAUDAN ALOITUSASETELMAAN-------------------------------------------------------------------
     /**
-     * Asettaa laudalle pelin alkutilanteen: pienissä kupeissa 4 kiveä,
-     * mmancalat tyhjät.
+     * Asettaa laudalle pelin alkutilanteen: pienissä kupeissa 4 kiveä, mancalat
+     * tyhjiä.
      */
     public void startBoard() {
         this.lauta = new int[]{4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
@@ -57,120 +60,201 @@ public class Board {
 //----------VASTAPUOLELLA OLEVAN KUPIN INDEKSI-----------------------------------------------------------
     /**
      *
-     * @param indeksi kupin indeksi, jonka vastapuolen kupin indeksin haluamme tietää
+     * @param indeksi kupin indeksi, jonka vastapuolen kupin indeksin haluamme
+     * tietää
      * @return annetun indeksin vastapuoleisen kupin indeksin
      */
-    public int vastapuolenKivet(int indeksi) {
-        //0=ihminen, 1=kone 
-        int vastapuolenIndeksi;
-        if (indeksi > 6) {
-            vastapuolenIndeksi = 12 - indeksi;
-        } else {
+    public int vastapuolenInd(int indeksi) {
+
+        int vastapuolenIndeksi = -1;
+        if (indeksi > 6 && indeksi < 13) {
             vastapuolenIndeksi = indeksi - 12;
+
+        } else if (indeksi < 6 && indeksi > -1) {
+            vastapuolenIndeksi = 12 - indeksi;
         }
         return vastapuolenIndeksi;
     }
 
-//-----------TEKEE SIIRRON-----------------------------------------------------------------------------
+//-----------TEKEE SIIRRON OIKEASTI-----------------------------------------------------------------------------
     /**
-     * päivittää pelitilanteen pelaajan ja annetun indeksin perusteella
+     * Päivittää varsinaisen laudan pelitilanteen pelaajan ja annetun indeksin
+     * perusteella muuttaa this.uusiVuoro arvon -> true, jos siirrolla saa uuden
+     * vuoron. Lopuksi muuttaa temp-laudan vastaamaan uutta pelitilannetta.
      *
      * @param indeksi, johon siirto tehdään
      * @param pelaaja, jonka siirto on kyseessä
      * @return true, jos siirto on sallittu
      */
-    public boolean teeSiirto(int indeksi, int pelaaja) {
+    public boolean teeSiirtoOikeasti(int indeksi, int pelaaja) { //ind 6 ja pelaaja 2 =kone
 
-        boolean uusiVuoro = false;
-
+        // boolean uusiVuoro = false;
         int kiviaKipossa = this.lauta[indeksi];
         int vastustajanMancala;
         int mancala;
-
-        //viimeisen kiven indeksi (mahdollisesti yli taulukon indeksien)
-        int viimeinenKiviInd = indeksi + kiviaKipossa;
 
         if (pelaaja == HUMAN) {
             vastustajanMancala = 13;
             mancala = 6;
 
+            this.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+
             if (this.lauta[indeksi] == 0) {
                 System.out.println("Et voi tehdä siirtoa tyhjästä kiposta.");
                 return false;
-            } else if ((indeksi > 6 || indeksi < 0) && pelaaja != 2) {
+
+            } else if ((indeksi > 6 || indeksi < 0)) {
                 System.out.println("Voit valita kipoista 1-6");
                 return false;
-            }
 
-            do {
-
-                if (viimeinenKiviInd >= vastustajanMancala) {
-                    viimeinenKiviInd = vastustajanMancala - (indeksi + kiviaKipossa);
-                }
+            } else {
 
                 //tyhjennetään valittu kippo
                 this.lauta[indeksi] = 0;
 
                 //ja jaetaan kivet seuraaviin kippoihin                
-                for (int i = indeksi + 1; i < indeksi + 1 + kiviaKipossa; i++) {
+                for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
 
                     if (i < vastustajanMancala) {
                         this.lauta[i]++;
-                    } else if (i > vastustajanMancala)//vastustajanMancala)
-                    {
-                        this.lauta[14 - i]++;
+                    } else if (i > vastustajanMancala) {
+                        this.lauta[i - 14]++;
                     } else if (i == vastustajanMancala) {
                         kiviaKipossa += 1;
                     }
                 }
+            }
 
-                if (viimeinenKiviInd == mancala) {
-                    uusiVuoro = true;
-
-                } //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet
-                else if (viimeinenKiviInd < mancala && this.lauta[viimeinenKiviInd] == 1) {
-                    int vastustajanKivet = this.lauta[vastapuolenKivet(viimeinenKiviInd)];
-                    this.lauta[viimeinenKiviInd] = 0;
-                    this.lauta[mancala] += vastustajanKivet + 1;
-                    this.lauta[vastapuolenKivet(viimeinenKiviInd)] = 0;
-                }
-
-            } while (uusiVuoro);
+            if (this.viimeinenKiviInd == mancala) {
+                this.uusiVuoro = true;
+            }
+            else if (this.viimeinenKiviInd < mancala && this.lauta[this.viimeinenKiviInd] == 1) { //viimeisenInd =indeksi+kiviäKipossa
+                int vastapuolenIndeksi = vastapuolenInd(this.viimeinenKiviInd);
+                this.lauta[this.viimeinenKiviInd] = 0;
+                this.lauta[mancala] += this.lauta[vastapuolenIndeksi] + 1;
+                this.lauta[vastapuolenIndeksi] = 0;
+                this.uusiVuoro = false;
+            }
+            
 
         } else if (pelaaja == COMPUTER) {
             vastustajanMancala = 6;
             mancala = 13;
+
+            this.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+
             this.lauta[indeksi] = 0;
-            uusiVuoro = false;
 
-            do {
-                if (viimeinenKiviInd > mancala) {
-                    viimeinenKiviInd = indeksi + kiviaKipossa - mancala;
+            //kaikki kiposta nostetut kivet jaetaan seuraaviin kippoihin
+            for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
+                if (i <= 13 || i > 20) {
+                    this.lauta[i]++;
+                } //ei ole vastustajan mancala
+                else if (i > 14 && i < 7) {
+                    this.lauta[i - 14]++;
+                } else if (i == 20) {
+                    kiviaKipossa += 1;
                 }
+            }
 
-                //kaikki kiposta nostetut kivet jaetaan seuraaviin kippoihin
-                for (int i = indeksi + 1; i < indeksi + 1 + kiviaKipossa; i++) {
-                    if (i <= mancala) {
-                        this.lauta[i]++;
-                    } //ei ole vastustajan mancala
-                    else if (i > mancala && i != mancala + vastustajanMancala) {
-                        this.lauta[i - 14]++;
-                    } else if (i == mancala + vastustajanMancala) {
-                        kiviaKipossa += 1;
-                    } //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet
-                    else if (viimeinenKiviInd > vastustajanMancala && viimeinenKiviInd != mancala && this.lauta[viimeinenKiviInd] == 1) {
-                        int vastustajanKivet = this.lauta[vastapuolenKivet(viimeinenKiviInd)];
-                        this.lauta[viimeinenKiviInd] = 0;
-                        this.lauta[mancala] += vastustajanKivet + 1;
-                        this.lauta[vastapuolenKivet(viimeinenKiviInd)] = 0;
-                    } //saako tietokone uuden vuoron
-                    else if (viimeinenKiviInd == mancala) {
-                        uusiVuoro = true;
-                    }
-                }
-            } while (uusiVuoro);
+            if (this.viimeinenKiviInd == mancala) {
+                this.uusiVuoro = true;
+            } //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet            
+            
+            else if (this.viimeinenKiviInd < mancala && this.viimeinenKiviInd > vastustajanMancala && this.lauta[this.viimeinenKiviInd] == 1) {
+                int vastapuolenIndeksi = vastapuolenInd(this.viimeinenKiviInd);
+                this.lauta[this.viimeinenKiviInd] = 0;
+                this.lauta[mancala] += this.lauta[vastapuolenIndeksi] + 1;
+                this.lauta[vastapuolenIndeksi] = 0;
+                this.uusiVuoro = false;
+            }
         }
+        //päivittää temp-laudan ajantasalle
+        Board tmp = this;
+        this.temp = tmp;
         return true;
+    }
+
+//--------------SIMULOI TEHTÄVÄÄ SIIRTOA------------------------
+    /**
+     * Päivittää temp-lautaa (eli ei varsinaista oikeaa pelitilannetta.
+     * Päivittää uusiVuoro->true jos siirrolla saa uuden vuoron.
+     *
+     * @param indeksi
+     * @param pelaaja
+     *
+     */
+    public void teeSiirtoLeikisti(int indeksi, int pelaaja) {
+        //this.temp.uusiVuoro = false;
+        //temp.lauta[indeksi]=this.lauta[indeksi];
+        int vastustajanMancala;
+        int mancala;
+
+        int kiviaKipossa = this.temp.lauta[indeksi];
+
+        if (pelaaja == HUMAN) {
+            vastustajanMancala = 13;
+            mancala = 6;
+
+            this.temp.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+
+            this.temp.lauta[indeksi] = 0;
+
+            //ja jaetaan kivet seuraaviin kippoihin (temp laudan)               
+            for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
+
+                if (i < vastustajanMancala) {
+                    this.temp.lauta[i]++;
+                } else if (i > vastustajanMancala) {
+                    this.temp.lauta[i - 14]++;
+                } else if (i == vastustajanMancala) {
+                    kiviaKipossa += 1;
+                }
+            }
+
+            if (this.temp.viimeinenKiviInd == mancala) {
+                this.temp.uusiVuoro = true;
+            } 
+            //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet
+            else if (this.temp.viimeinenKiviInd < mancala && this.temp.lauta[this.temp.viimeinenKiviInd] == 1) { //viimeisenInd =indeksi+kiviäKipossa
+                int vastapuolenIndeksi = vastapuolenInd(this.temp.viimeinenKiviInd);
+                this.temp.lauta[this.temp.viimeinenKiviInd] = 0;
+                this.temp.lauta[mancala] += this.lauta[vastapuolenIndeksi] + 1;
+                this.temp.lauta[vastapuolenIndeksi] = 0;
+                this.temp.uusiVuoro = false;
+            }
+
+        } else if (pelaaja == COMPUTER) {
+            vastustajanMancala = 6;
+            mancala = 13;
+
+            this.temp.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+
+            this.temp.lauta[indeksi] = 0;
+
+            //kaikki kiposta nostetut kivet jaetaan seuraaviin kippoihin
+            for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
+                if (i <= 13 || i > 20) {
+                    this.temp.lauta[i]++;
+                } //ei ole vastustajan mancala
+                else if (i > 14 && i < 7) {
+                    this.temp.lauta[i - 14]++;
+                } else if (i == 20) {
+                    kiviaKipossa += 1;
+                }
+            }
+
+            if (this.temp.viimeinenKiviInd == mancala) {
+                this.temp.uusiVuoro = true;
+            } //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet            
+            else if (this.temp.viimeinenKiviInd < mancala && this.temp.viimeinenKiviInd > vastustajanMancala && this.temp.lauta[this.temp.viimeinenKiviInd] == 1) {
+                int vastapuolenIndeksi = vastapuolenInd(this.temp.viimeinenKiviInd);
+                this.temp.lauta[this.temp.viimeinenKiviInd] = 0;
+                this.temp.lauta[mancala] += this.temp.lauta[vastapuolenIndeksi] + 1;
+                this.temp.lauta[vastapuolenIndeksi] = 0;
+                this.temp.uusiVuoro = false;
+            }
+        }
     }
 
 //---------LASKEE PELIN LOPPUPISTEET------------------------------------------------------------------------------- 
@@ -201,12 +285,7 @@ public class Board {
      * @return ture jos pelissä ei ole enää mahdollisia siirtoja
      */
     public boolean isGameOver() {
-        if (mahdollisetSiirrot(HUMAN).isEmpty() || mahdollisetSiirrot(COMPUTER).isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return (mahdollisetSiirrot(HUMAN).isEmpty() || mahdollisetSiirrot(COMPUTER).isEmpty());
     }
 
 //------------HAETAAN KAIKKI MAHDOLLISET SIIRROT---------------------------------------------------------------------------
@@ -217,7 +296,6 @@ public class Board {
      * @param pelaaja (1=pelaaja, 2=tietokone)
      * @return lista annetun pelaajan mahdollisista siirroista
      */
-    
     public List<Integer> mahdollisetSiirrot(int pelaaja) {
         List<Integer> indeksit = new ArrayList<>();
 
@@ -237,70 +315,39 @@ public class Board {
         return indeksit;
     }
 
-//-------------MINIMAX ALGORITMI---------------------------------------------------------------------------- 
+//---------------LASKEE VIIMEISEN KIVEN INDEKSIN--------------------------------------  
+//päivittää annetun Board:n viimeisenKivenIndeksi 
     /**
-     * @param depth tutkittava syvyys
-     * @param turn pelaaja(=1) vai tietokone(=2)
-     * @return max pistetilanteen jos vuoro on tietokoneen ja min jos vuoro on
-     * pelaajan
+     * 
+     * @param indeksi
+     * @param kivet
      */
     
-    public int minimax(int depth, int turn) {
-
-        List<Integer> sallitutSiirrot = mahdollisetSiirrot(turn);
-
-        if (isGameOver() || sallitutSiirrot.isEmpty() || depth == 0) {
-            return evaluate(); //palauttaa pistetilanteen
-        }
-
-        int min = Integer.MAX_VALUE; //pelaaja pyrkii minimoimaan 
-        int max = Integer.MIN_VALUE; //tietokone maksimoimaan
-
-        for (int i = 0; i < sallitutSiirrot.size(); i++) {
-            int j = sallitutSiirrot.get(i);
-
-            if (turn == COMPUTER) {
-                teeSiirto(j, COMPUTER);
-                int pistetilanne = minimax(depth + 1, HUMAN);
-                max = Math.max(pistetilanne, max);
-
-                if (depth == 0) {
-                    System.out.println("Koneen siirto kupista: " + j + " saisi pisteiksi: " + pistetilanne);
-                }
-
-                if (pistetilanne >= 0) {
-                    if (depth == 0) {
-                        this.koneenSiirto = j;
-                    }
-                }
-
-                if (j == sallitutSiirrot.size() - 1 && max < 0) {
-                    if (depth == 0) {
-                        this.koneenSiirto = j;
-                    }
-                }
-
-            } else if (turn == HUMAN) {
-                teeSiirto(j, HUMAN);
-                int pistetilanne = minimax(depth + 1, COMPUTER);
-                min = Math.min(pistetilanne, min);
-                if (min < 0) {
-                    break;
-                }
+    public void viimeisenKivenIndeksi(int indeksi, int kivet) {
+        //katsotaan, mihin indeksiin viimeinen kivi menee
+        if (indeksi<13 && indeksi>6) { //eli jos pelaaja on tietokone
+            if ((indeksi + kivet) % 13 == 0) {
+                viimeinenKiviInd = 13; //oma mancala
+            } else if ((indeksi + kivet) % 13 == 6) {
+                viimeinenKiviInd = 7; //vastustajan mancalasta seuraava oma kuppi
+            } else if ((indeksi + kivet) % 13 != 0 && (indeksi + kivet) > 13 && (indeksi + kivet) % 13 < 6) {
+                viimeinenKiviInd = (indeksi + kivet) % 13 - (Math.floorDiv(indeksi + kivet, 13));
+            } else if ((indeksi + kivet) % 13 != 0 && (indeksi + kivet) > 13 && (indeksi + kivet) % 13 > 6) {
+                viimeinenKiviInd = (indeksi + kivet) % 13 + 1 - (Math.floorDiv(indeksi + kivet, 13));
+            }
+        } else {
+            if ((indeksi + kivet) % 13 == 6) {
+                viimeinenKiviInd = 6; //oma mancala
+            } else if ((indeksi + kivet) % 13 == 0) {
+                viimeinenKiviInd = 0; //vastustajan mancalasta seuraava oma kuppi
+            } else if ((indeksi + kivet) % 13 != 6 && (indeksi + kivet) > 13 && (indeksi + kivet) % 13 < 7) {
+                viimeinenKiviInd = (indeksi + kivet) % 13 - (Math.floorDiv(indeksi + kivet, 13));
+            } else if ((indeksi + kivet) % 13 != 0 && (indeksi + kivet) > 13 && (indeksi + kivet) % 13 > 7) {
+                viimeinenKiviInd = (indeksi + kivet) % 13 + 1 - (Math.floorDiv(indeksi + kivet, 13));
             }
         }
-
-        if (turn == COMPUTER) {
-            return max;
-        } else {
-            return min;
-        }
     }
-
-//----------------------------------------------------------------------------------    
-    /*public static void main(String[] args) {
-        Board board = new Board();
-        board.startBoard();
-        System.out.println(board.minimax(2, HUMAN));
-    }*/
 }
+
+
+

@@ -5,6 +5,7 @@
  */
 package newpackage;
 
+import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -14,9 +15,9 @@ import java.awt.event.*;
  */
 public class Gui extends JFrame {
 
-    private JTextField tekstikenttä, koneensiirto, omasiirto;
+    private JTextField omasiirto, koneensiirto;
     private JButton nappi;
-    private JLabel otsikko;
+    private JLabel pelitilanne, info;
 
     class Kuuntelija implements ActionListener {
 
@@ -25,8 +26,8 @@ public class Gui extends JFrame {
         }
     }
 
-    private Board lauta;
-    private Main ohjelma;
+    //private Board lauta;
+    //private Main ohjelma;
 
     /**
      * konstuktori
@@ -40,30 +41,29 @@ public class Gui extends JFrame {
         //asetetaan koko
         this.setSize(200, 300);
 
-        /*        JPanel paneli = new JPanel();
+        JPanel mainPaneli = new JPanel();
         JPanel paneli1 = new JPanel();
-        JPanel paneli2 = new JPanel();
-        paneli.setLayout(new BorderLayout());
+        //JPanel paneli2 = new JPanel();
+        mainPaneli.setLayout(new BorderLayout());
         paneli1.setLayout(new FlowLayout(FlowLayout.CENTER));
-        paneli2.setLayout(new FlowLayout(FlowLayout.LEFT));
-        paneli.add(nappi);
-      paneli.add(this.koneensiirto);
-         */
-        this.koneensiirto = new JTextField();
+       // paneli2.setLayout(new FlowLayout(FlowLayout.LEFT));
+        paneli1.add(nappi);
+        mainPaneli.add(this.koneensiirto);
+         
+        this.info = new JLabel();
         this.omasiirto = new JTextField();
-        this.otsikko = new JLabel("Kalaha");
-
-        this.nappi = new JButton();
-        this.tekstikenttä = new JTextField();
+        this.nappi = new JButton("Ok");
+        this.koneensiirto = new JTextField();
+        this.pelitilanne = new JLabel();
         //nappi.addActionListener(new Kuuntelija());
         this.setVisible(true);
     }
 
       
     
-    /*
+    
     public static void main(String[] args) {
         new Gui();
-    } */
+    } 
 
 }
