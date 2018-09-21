@@ -12,9 +12,7 @@ import java.util.List;
  * Luokassa Board on siirtojen suoritus sekä mahdollisten siirtojen simulointi.
  * Oikeat siirrot päivittävät varsinaisen pelilaudan asetelman, simuloiva siirto
  * päivittää väliaikaista "temp"-Boardia. Pelilaudan toiminnallisuus sääntöineen
- * on tässä luokassa, kuten myös pelin kannalta oleellinen minimax-algoritmi,
- * jonka avulla tietokoneen paras mahdollinen siirto kullekin tilanteelle
- * saadaan laskettua.
+ * on tässä luokassa.
  *
  * @version 1.0.
  * @author Jenni
@@ -79,7 +77,7 @@ public class Board {
 //-----------TEKEE SIIRRON OIKEASTI-----------------------------------------------------------------------------
     /**
      * Päivittää varsinaisen laudan pelitilanteen pelaajan ja annetun indeksin
-     * perusteella muuttaa this.uusiVuoro arvon -> true, jos siirrolla saa uuden
+     * perusteella muuttaa this.uusiVuoro arvon true, jos siirrolla saa uuden
      * vuoron. Lopuksi muuttaa temp-laudan vastaamaan uutta pelitilannetta.
      *
      * @param indeksi, johon siirto tehdään
@@ -102,13 +100,12 @@ public class Board {
             if (this.lauta[indeksi] == 0) {
                 System.out.println("Et voi tehdä siirtoa tyhjästä kiposta.");
                 return false;
-
-            } else if ((indeksi > 6 || indeksi < 0)) {
+            } 
+            else if ((indeksi > 6 || indeksi < 0)) {
                 System.out.println("Voit valita kipoista 1-6");
                 return false;
-
-            } else {
-
+            } 
+            else {
                 //tyhjennetään valittu kippo
                 this.lauta[indeksi] = 0;
 
@@ -128,6 +125,7 @@ public class Board {
             if (this.viimeinenKiviInd == mancala) {
                 this.uusiVuoro = true;
             }
+            
             else if (this.viimeinenKiviInd < mancala && this.lauta[this.viimeinenKiviInd] == 1) { //viimeisenInd =indeksi+kiviäKipossa
                 int vastapuolenIndeksi = vastapuolenInd(this.viimeinenKiviInd);
                 this.lauta[this.viimeinenKiviInd] = 0;
@@ -146,7 +144,7 @@ public class Board {
             this.lauta[indeksi] = 0;
 
             //kaikki kiposta nostetut kivet jaetaan seuraaviin kippoihin
-            for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
+            for (int i = indeksi + 1; i < indeksi + kiviaKipossa; i++) {
                 if (i <= 13 || i > 20) {
                     this.lauta[i]++;
                 } //ei ole vastustajan mancala
@@ -170,18 +168,18 @@ public class Board {
             }
         }
         //päivittää temp-laudan ajantasalle
-        Board tmp = this;
-        this.temp = tmp;
+        //Board tmp = this;
+        //this.temp = tmp;
         return true;
     }
 
 //--------------SIMULOI TEHTÄVÄÄ SIIRTOA------------------------
     /**
      * Päivittää temp-lautaa (eli ei varsinaista oikeaa pelitilannetta.
-     * Päivittää uusiVuoro->true jos siirrolla saa uuden vuoron.
+     * Päivittää uusiVuoro=true jos siirrolla saa uuden vuoron.
      *
-     * @param indeksi
-     * @param pelaaja
+     * @param indeksi josta siirto tehdään
+     * @param pelaaja kone vai pelaaja
      *
      */
     public void teeSiirtoLeikisti(int indeksi, int pelaaja) {
@@ -189,14 +187,15 @@ public class Board {
         //temp.lauta[indeksi]=this.lauta[indeksi];
         int vastustajanMancala;
         int mancala;
+        this.temp=this;
 
-        int kiviaKipossa = this.temp.lauta[indeksi];
+        int kiviaKipossa = lauta[indeksi];
 
         if (pelaaja == HUMAN) {
             vastustajanMancala = 13;
             mancala = 6;
 
-            this.temp.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+            this.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
 
             this.temp.lauta[indeksi] = 0;
 
@@ -228,7 +227,7 @@ public class Board {
             vastustajanMancala = 6;
             mancala = 13;
 
-            this.temp.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
+            this.viimeisenKivenIndeksi(indeksi, kiviaKipossa);
 
             this.temp.lauta[indeksi] = 0;
 
@@ -285,7 +284,20 @@ public class Board {
      * @return ture jos pelissä ei ole enää mahdollisia siirtoja
      */
     public boolean isGameOver() {
-        return (mahdollisetSiirrot(HUMAN).isEmpty() || mahdollisetSiirrot(COMPUTER).isEmpty());
+        boolean ohi=true;
+        
+        for(int i=0; i<6; i++){
+            if(this.lauta[i]!=0){
+                ohi=false;
+            }
+        }
+        
+        for(int i=7; i<13; i++){
+            if(this.lauta[i]!=0){
+                ohi=false;
+            }
+        }        
+        return ohi;
     }
 
 //------------HAETAAN KAIKKI MAHDOLLISET SIIRROT---------------------------------------------------------------------------
@@ -294,33 +306,36 @@ public class Board {
      * siirtojen indekseistä
      *
      * @param pelaaja (1=pelaaja, 2=tietokone)
-     * @return lista annetun pelaajan mahdollisista siirroista
+     * @return 6-paikkainen lista annetun pelaajan mahdollisista siirroista. 
+     * Esim. tietokoneen mahdollisten siirtojen lista[0] tarkoittaa, että tietokone saa siirtää kupistaan 1, eli laudan indeksistä 7.
      */
-    public List<Integer> mahdollisetSiirrot(int pelaaja) {
-        List<Integer> indeksit = new ArrayList<>();
+    public int[] mahdollisetSiirrot(int pelaaja) {
+        int[] indeksit = new int[6];
 
         if (pelaaja == COMPUTER) {
             for (int i = 12; i > 6; i--) {
                 if (this.lauta[i] != 0) {
-                    indeksit.add(i);
-                }
+                    indeksit[12-i]=1;
+                } else indeksit[12-i]=0;
             }
         } else if (pelaaja == HUMAN) {
             for (int i = 0; i < 6; i++) {
                 if (this.lauta[i] != 0) {
-                    indeksit.add(i);
-                }
+                    indeksit[i]=1;
+                } else indeksit[i]=0;
             }
         }
-        return indeksit;
+        return indeksit; //palauttaa annetun pelaajan siirrot int[6], esim [0, 1, 1, 1, 0, 1], jossa 0=ei mahdollinen, 1=mahdollinen
     }
+
+    
 
 //---------------LASKEE VIIMEISEN KIVEN INDEKSIN--------------------------------------  
 //päivittää annetun Board:n viimeisenKivenIndeksi 
     /**
      * 
-     * @param indeksi
-     * @param kivet
+     * @param indeksi josta kivet tullaan siirtämään
+     * @param kivet ko kupissa olevien kivien lkm
      */
     
     public void viimeisenKivenIndeksi(int indeksi, int kivet) {
@@ -347,7 +362,9 @@ public class Board {
             }
         }
     }
+
 }
+
 
 
 
