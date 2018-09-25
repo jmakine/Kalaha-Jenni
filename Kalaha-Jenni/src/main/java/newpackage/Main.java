@@ -88,34 +88,38 @@ public class Main {
             while (vuoro == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                if (board.isGameOver()) {
-                    break;
-                } else { //peli ei ole ohi
+                // if (board.isGameOver()) {
+                //    break;
+                //} else { //peli ei ole ohi
+                int[] maxpisteet = minimax(2, board, 0);
+                System.out.println(maxpisteet[0] + "" + maxpisteet[1] + "" + maxpisteet[2] + "" + maxpisteet[3] + "" + maxpisteet[4] + "" + maxpisteet[5]);
 
-                    int[] pisteet = minimax(2, board);
-                    System.out.println(pisteet[0] + "" + pisteet[1] + "" + pisteet[2] + "" + pisteet[3] + "" + pisteet[4] + "" + pisteet[5]);
-
-                    //kone siirtää siitä kiposta, jonka pisteet on korkeimmat
-                    int koneSiirtaa = Integer.MIN_VALUE;
-
-                    for (int ind = 0; ind < 6; ind++) {
-                        if (pisteet[ind] > koneSiirtaa) {
-                            koneSiirtaa = ind + 6;
-                        }
+                //kone siirtää siitä kiposta, jonka pisteet on korkeimmat
+                int koneSiirtaa = -1;// = Integer.MIN_VALUE;
+                int max=Integer.MIN_VALUE;
+                
+                for (int ind = 0; ind < 6; ind++) {
+                    if (maxpisteet[ind] > max) {
+                        max = maxpisteet[ind];
+                        koneSiirtaa=ind+7;
                     }
-
-                    System.out.println("Kone siirtää kupista " + koneSiirtaa);
-                    board.teeSiirtoOikeasti(koneSiirtaa, 2); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board
-                    System.out.println("Siirron jälkeen tilanne:");
-                    board.printBoard();
                 }
+                
+
+                System.out.println("Kone siirtää kupista " + koneSiirtaa);
+                board.teeSiirtoOikeasti(koneSiirtaa, 2); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board
+                System.out.println("Siirron jälkeen tilanne:");
+                board.printBoard();
 
                 if (!board.uusiVuoro) {
                     vuoro = 1;
                 }
+                if(board.isGameOver()){
+                    break;
+                }
             }
 
-            //pelaajan vuoro:
+//-----------------------pelaajan vuoro-----------------------
             while (vuoro == 1 && !board.isGameOver()) {
 
                 System.out.println("Valitse siirtosi: ");
@@ -135,6 +139,9 @@ public class Main {
                     vuoro = 2;
                 }
 
+            }
+            if(board.isGameOver()){
+                break;
             }
 
         }
@@ -158,7 +165,165 @@ public class Main {
      * @param lauta on se pelilauta, jolle minimax suoritetaan.
      * @return 6-paikkainen pistetaulu.
      */
-    public static int[] minimax(int pelaaja, Board lauta) {
+    public static int[] minimax(int pelaaja, Board lauta, int deapth) {
+
+        Board[] aliPuut = new Board[6];
+        lauta.uusiVuoro = false;
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
+
+        int[] pisteet = new int[6];
+        int[] lisapisteet = new int[6]; //!!! not used
+        int i, j;
+
+        for (i = 0; i < 6; i++) {
+            aliPuut[i] = new Board();
+        }
+
+//------------------------------------PELAAJA IHMINEN-----------------
+        if (pelaaja == 1) {
+
+            int[] minimipisteet = new int[6];
+            for (int k = 0; k < 6; k++) {
+                minimipisteet[k] = Integer.MAX_VALUE;
+            }
+
+            //kopioidaan pelitilanne alipuihin
+            for (i = 0; i < 6; i++) {
+                Board temp=lauta;
+                aliPuut[i] = temp;
+            }
+
+            //tutkitaan jokainen mahdollinen siirto
+            for (i = 0; i < 6; i++) {
+
+                int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //=0 jos siirto ei ole sallittu
+
+                int siirto = aliPuunSiirrot[i];
+
+                if (siirto != 0) { //siirto sallittu
+                    aliPuut[i].teeSiirtoLeikisti(i, pelaaja);
+
+                    if (!aliPuut[i].uusiVuoro && deapth < 5 && !aliPuut[i].isGameOver()) {
+
+                        pisteet = minimax(pelaaja + 1, aliPuut[i], deapth + 1); //tietokone maksimoi, pelaaja minimoi
+                        aliPuut[i].peruSiirto();
+                        
+                            //etsitään palautetuista pisteistä pienin
+                            for (int k = 0; k < 6; k++) {
+                                if (pisteet[k] < min) {
+                                    min = pisteet[k];
+                                }
+                                pisteet[i] = min;
+                            }
+                                                
+                    } 
+                    else {
+                        while(aliPuut[i].uusiVuoro && !aliPuut[i].isGameOver() && deapth < 5) {
+
+                        lisapisteet = minimax(pelaaja, aliPuut[i], deapth + 1);
+
+                        //uusintasiirron jälkeen etsitään maksimi
+                        for (int k = 0; k < 6; k++) {
+                            if (lisapisteet[k] < min) {
+                                min = lisapisteet[k];
+                            }
+                            pisteet[i] = min;
+                        }
+                        }
+                     
+                    if (aliPuut[i].isGameOver() || deapth>4) {
+                            pisteet[i] = aliPuut[i].evaluate();                       
+                    }
+
+                }
+                min = Integer.MAX_VALUE;
+
+            }
+
+            return pisteet;
+        }
+
+//-----------TIETOKONEEN SIIRTO-----------------
+        if (pelaaja == 2 && !lauta.isGameOver() && deapth<5) {
+
+            for (i = 0; i < 6; i++) {
+                aliPuut[i] = lauta;
+            }
+
+            int[] minimit = new int[6];
+            for (int k = 0; k < 6; k++) {
+                minimit[k] = Integer.MAX_VALUE;
+            }
+
+            //katsotaan kaikki mahdolliset pelin etenemisvaihtoehdot
+            for (i = 0; i < 6; i++) {
+
+                int[] puunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0, 1, 0, 1, 1, 1]
+
+                //for (int l = 7; l < 14; l++) {
+                int siirto = puunSiirrot[i]; //int[6], jonka paikan arvo on 0, jos siirto tästä indeksistä ei ole sallittu ja 1 jos on sallittu
+
+                if (siirto != 0) {
+                    aliPuut[i].teeSiirtoLeikisti(siirto, pelaaja);
+
+                    if (!aliPuut[i].uusiVuoro) {
+
+                        if (!aliPuut[i].isGameOver() && deapth < 5) {
+
+                            minimit = minimax(pelaaja - 1, aliPuut[i], deapth + 1);
+                            aliPuut[i].peruSiirto();
+                            //etsitään suurin palautetuista minimeistä
+                            for (int k = 0; k < 6; k++) {
+                                if (minimit[k] < max) {
+                                    max = minimit[k];
+                                }
+                            } pisteet[i]=max;
+                        } //jos peli on ohi tämän vuoron jälkeen, lasketaan sen arvo
+                        else {
+                            pisteet[i] = aliPuut[i].evaluate();
+                        }
+                    } //jos pelaaja saa siirrolla uuden vuoron
+                    else if (aliPuut[i].uusiVuoro == true && deapth < 5) {
+
+                        if (!aliPuut[i].isGameOver()) {
+                            lisapisteet = minimax(pelaaja, aliPuut[i], deapth + 1);
+                            aliPuut[i].peruSiirto();
+                            //haetaan näistä suurin
+                            for (int k = 0; k < 6; k++) {
+                                if (lisapisteet[k] < min) {
+                                    min = lisapisteet[k];
+                                }
+                                pisteet[i] = min;
+                            }
+
+                        } else {
+                            pisteet[i] = aliPuut[i].evaluate();
+                        }
+                    }
+
+                    max = Integer.MIN_VALUE;
+
+                }
+                
+            }
+        }
+        return pisteet;
+    }
+return pisteet;
+}
+}
+
+//---------------------MIN-MAX-------------------------------------------------------------------
+/**
+ * Minimax-algoritmi palauttaa pisteet kullekkin mahdolliselle siirrolle
+ * lähtötilanteesta.
+ *
+ * @param pelaaja on joko 1=ihminen tai 2=tietokone
+ * @param lauta on se pelilauta, jolle minimax suoritetaan.
+ * @return 6-paikkainen pistetaulu.
+ */
+/*public static int[] minimax(int pelaaja, Board lauta) {
 
         Board[] aliPuut = new Board[6];
         lauta.uusiVuoro = false;
@@ -298,5 +463,4 @@ public class Main {
         }
         return pisteet;
     }
-
-}
+ */
