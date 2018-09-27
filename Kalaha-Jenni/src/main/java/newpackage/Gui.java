@@ -11,9 +11,10 @@ import java.awt.event.*;
 
 /**
  * käyttis
+ *
  * @author Jenni
  */
-public class Gui extends JFrame {
+/*public class Gui extends JFrame {
 
     private JTextField omasiirto, koneensiirto;
     private JButton nappi;
@@ -31,8 +32,8 @@ public class Gui extends JFrame {
 
     /**
      * konstuktori
-     */
-    public Gui() {
+ */
+ /*public Gui() {
 
         //ikkuna ilmestyy kuvaruudun keskelle
         setLocationRelativeTo(null);
@@ -57,13 +58,77 @@ public class Gui extends JFrame {
         this.pelitilanne = new JLabel();
         //nappi.addActionListener(new Kuuntelija());
         this.setVisible(true);
+    }*/
+//public static void main(String[] args) {
+//  new Gui();
+// } 
+//}
+//Imports are listed in full to show what's being used
+//could just import javax.swing.* and java.awt.* etc..
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JComboBox;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Gui {
+    
+        JLabel pelinKulku;
+        JLabel pelilauta;
+        JTextField syote;              
+        JButton nappi;
+        
+
+    public static void main(String[] args) {
+        Board b = new Board();
+        b.startBoard();
+        new Gui(b);
     }
 
-      
-    
-    
-    public static void main(String[] args) {
-        new Gui();
-    } 
+    public Gui(Board b) {
+        JFrame guiFrame = new JFrame();        
+        guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        guiFrame.setTitle("Kalaha");
+        guiFrame.setSize(300, 250);
+        guiFrame.setLocationRelativeTo(null);
+        
+        
+        //ylemmässä JPanel:ssa on kaksi JLabeliä: pelin ohjeistus ja pelilaudan tilanne
+        final JPanel ohjeJApeliLauta = new JPanel();
+        ohjeJApeliLauta.setLayout(new GridLayout(1,2));
+        pelinKulku = new JLabel(); //tähän aina nappia painamalla päivittyy tekstiä
+        pelilauta = new JLabel(b.pelitilanne); //kun tehdään siirto, päivittyy pelilauta=String
+        ohjeJApeliLauta.add(pelinKulku);
+        ohjeJApeliLauta.add(pelilauta);
+        ohjeJApeliLauta.setVisible(true);
+        
 
+        //Toinen JPanel sisältää napin ja syötekentän, jonka arvo otetaan käyttöön nappia painamalla
+
+        final JPanel syoteJaNappi = new JPanel();   
+        syoteJaNappi.setLocation(2, 1);
+        syote = new JTextField();              
+        nappi = new JButton("Ok");
+
+        nappi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                
+                
+            }
+        });
+        
+        syoteJaNappi.add(syote);
+        syoteJaNappi.add(nappi);
+        syoteJaNappi.setVisible(true);
+
+        guiFrame.add(ohjeJApeliLauta, BorderLayout.NORTH);
+        guiFrame.add(syoteJaNappi, BorderLayout.SOUTH);
+        
+        guiFrame.setVisible(true);
+    }
 }
