@@ -24,21 +24,7 @@ public class BoardTest {
         b=new Board();
     }
     
-    /**
-     * Test of startBoard method, of class Board.
-     */
-    @Test
-    public void testStartBoard() {        
-    }
-
-    /**
-     * Test of printBoard method, of class Board.
-     */
-    @Test
-    public void testPrintBoard() {
-       
-    }
-
+   
     /**
      * Test of vastapuolenInd method, of class Board.
      */
@@ -105,12 +91,14 @@ public class BoardTest {
         
        // Board instance = new Board();
         b.startBoard();
+        
         for(int i=0; i<6; i++){
         b.lauta[i]=0;
-        }
-        //boolean result = b.isGameOver();
+        }    
+        
         assertEquals(true, b.isGameOver());
-        }
+        
+    }
 
     /**
      * Test of mahdollisetSiirrot method, of class Board.
@@ -134,9 +122,11 @@ public class BoardTest {
     @Test
     public void testViimeisenKivenIndeksi() {        
         int indeksi = 5;
+        b.startBoard();
         b.lauta[indeksi]=7; //tietokone siirtää
         //b.startBoard();
         b.viimeisenKivenIndeksi(indeksi);       
         assertEquals(b.viimeinenKiviInd, 12);
     }    
+    
 }
