@@ -11,11 +11,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
  * @author Jenni
  */
+//@Ignore
 public class MainTest {
     
     static Board b; 
@@ -38,7 +40,7 @@ public class MainTest {
     public void testMinimax() {
         System.out.println("minimax");
         int pelaaja = 2; 
-        b.printBoard();
+        //b.printBoard();
         for(int i=0; i<5;i++){
             b.lauta[i]=0;
             }
@@ -49,7 +51,7 @@ public class MainTest {
         b.lauta[6]=10;
         b.lauta[7]=1;
         b.lauta[13]=20;
-        int[] expResult = new int[]{21, 21, 21, 21, 21, 21};
+        int[] expResult = new int[]{21, 21, 21, 21, 21, 21}; //mikä arvo jos siirto ko kohdasta ei ole sallittu?
         int[] result = Main.minimax(pelaaja, b);
         assertArrayEquals(expResult, result);
         

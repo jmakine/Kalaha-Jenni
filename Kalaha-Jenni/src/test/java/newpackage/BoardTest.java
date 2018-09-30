@@ -70,6 +70,7 @@ public class BoardTest {
         
         b.teeSiirtoLeikisti(indeksi, pelaaja);
         assertEquals(b.temp.lauta[11], 5); 
+        assertEquals(b.lauta[11], 4);
     }
 
     /**
@@ -78,9 +79,25 @@ public class BoardTest {
     @Test
     public void testEvaluate() { 
         b.startBoard();
-        int result = b.evaluate();
-        assertEquals(0, result);
-        
+        Board c=new Board();
+        c.lauta[8]=5;
+        for(int i=0; i<8; i++){
+            c.lauta[i]=3; //21
+        }
+        for(int j=9; j<14; j++){
+            c.lauta[j]=1;//5+3+5=23
+        }
+        int pelaajanPisteet = 0;
+        for(int i=0; i<8; i++){
+            pelaajanPisteet += c.lauta[i];
+        }
+        int koneenPisteet = 23;
+        //3,3,3,3,3,3,3,  5,1,1,1,1,1,1
+        int resultB = b.evaluate();
+       // int resultC = c.evaluate();
+        assertEquals(0, resultB);
+        assertEquals(pelaajanPisteet, 24);
+        assertEquals(3, c.lauta[6]); //21
     }
 
     /**
@@ -108,7 +125,7 @@ public class BoardTest {
         int pelaaja = 2;
         b.startBoard();
         int[] siirrot = new int[]{1,1,1,1,1,1};     
-       for(int i=7; i<13; i++){
+        for(int i=7; i<13; i++){
             b.lauta[i]=1;
         }
        //b.lauta[12]=0;
@@ -128,5 +145,18 @@ public class BoardTest {
         b.viimeisenKivenIndeksi(indeksi);       
         assertEquals(b.viimeinenKiviInd, 12);
     }    
+    
+    @Test
+    public void testPeliOhiPelaajalla(){
+        b.startBoard();
+        
+        for(int i=0; i<6; i++){
+        b.lauta[i]=0;
+        }    
+        
+        assertEquals(true, b.isGameOver(1));
+        assertEquals(false, b.isGameOver(2));
+        
+    }
     
 }

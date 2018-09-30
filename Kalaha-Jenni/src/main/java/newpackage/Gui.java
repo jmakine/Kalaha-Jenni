@@ -101,14 +101,13 @@ public class Gui {
         final JPanel ohjeJApeliLauta = new JPanel();
         ohjeJApeliLauta.setLayout(new GridLayout(1,2));
         pelinKulku = new JLabel(); //tähän aina nappia painamalla päivittyy tekstiä
-        pelilauta = new JLabel(b.pelitilanne); //kun tehdään siirto, päivittyy pelilauta=String
+        pelilauta = new JLabel(); //kun tehdään siirto, päivittyy pelilauta=String
         ohjeJApeliLauta.add(pelinKulku);
         ohjeJApeliLauta.add(pelilauta);
         ohjeJApeliLauta.setVisible(true);
         
 
         //Toinen JPanel sisältää napin ja syötekentän, jonka arvo otetaan käyttöön nappia painamalla
-
         final JPanel syoteJaNappi = new JPanel();   
         syoteJaNappi.setLocation(2, 1);
         syote = new JTextField();              
@@ -117,7 +116,7 @@ public class Gui {
         nappi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                
+               
                 
             }
         });
