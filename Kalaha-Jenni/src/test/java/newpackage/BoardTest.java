@@ -124,11 +124,12 @@ public class BoardTest {
     public void testMahdollisetSiirrot() {
         int pelaaja = 2;
         b.startBoard();
-        int[] siirrot = new int[]{1,1,1,1,1,1};     
-        for(int i=7; i<13; i++){
+        for(int i=7; i<12; i++){
             b.lauta[i]=1;
         }
-       //b.lauta[12]=0;
+        b.lauta[12]=0;
+       int[] siirrot = new int[]{0,1,1,1,1,1};     
+        
        int[] result = b.mahdollisetSiirrot(pelaaja);
         assertArrayEquals(siirrot, result);
     }

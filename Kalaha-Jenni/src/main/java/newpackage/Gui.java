@@ -74,6 +74,7 @@ import javax.swing.JList;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
 
 public class Gui {
     
@@ -81,12 +82,12 @@ public class Gui {
         JLabel pelilauta;
         JTextField syote;              
         JButton nappi;
+        int pelaajanLuku;
         
 
     public static void main(String[] args) {
         Board b = new Board();
-        b.startBoard();
-        new Gui(b);
+        b.startBoard();        
     }
 
     public Gui(Board b) {
@@ -99,9 +100,9 @@ public class Gui {
         
         //ylemmässä JPanel:ssa on kaksi JLabeliä: pelin ohjeistus ja pelilaudan tilanne
         final JPanel ohjeJApeliLauta = new JPanel();
-        ohjeJApeliLauta.setLayout(new GridLayout(1,2));
-        pelinKulku = new JLabel(); //tähän aina nappia painamalla päivittyy tekstiä
-        pelilauta = new JLabel(); //kun tehdään siirto, päivittyy pelilauta=String
+        ohjeJApeliLauta.setLayout(new GridLayout(2,1));
+        pelinKulku = new JLabel("blaablaa"); //tähän aina nappia painamalla päivittyy tekstiä
+        pelilauta = new JLabel(b.pelitilanne); //kun tehdään siirto, päivittyy pelilauta=String
         ohjeJApeliLauta.add(pelinKulku);
         ohjeJApeliLauta.add(pelilauta);
         ohjeJApeliLauta.setVisible(true);
@@ -110,14 +111,14 @@ public class Gui {
         //Toinen JPanel sisältää napin ja syötekentän, jonka arvo otetaan käyttöön nappia painamalla
         final JPanel syoteJaNappi = new JPanel();   
         syoteJaNappi.setLocation(2, 1);
-        syote = new JTextField();              
+        syote = new JTextField("Kirjoita tähän");              
         nappi = new JButton("Ok");
 
         nappi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-               
-                
+               pelaajanLuku = Integer.parseInt(syote.getText());
+               pelinKulku.setText(syote.getText());                
             }
         });
         

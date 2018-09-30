@@ -24,10 +24,10 @@ import java.util.List;
 public class Board {
 
     //List<Integer> lauta;
-    int[] lauta;
+    public int[] lauta;
     int viimeinenKiviInd;
-    boolean uusiVuoro;
-    Board temp;
+    public boolean uusiVuoro;
+    public Board temp;
     int pistetilanne;
     String pelitilanne;
 
@@ -62,16 +62,15 @@ public class Board {
      * Tulostaa laudan sen hetkisen tilanteen.
      */
     public void printBoard() {
-       // this.pelitilanne "|" + this.lauta[13] + "|" + this.lauta[12] + "|" + this.lauta[11] + "|" + this.lauta[10] + "|" + this.lauta[9] + "|" + this.lauta[8] + "|" + this.lauta[7] + "\n"
-         //       + "  |" + this.lauta[0] + "|" + this.lauta[1] + "|" + this.lauta[2] + "|" + this.lauta[3] + "|" + this.lauta[4] + "|" + this.lauta[5] + "|" + this.lauta[6] + "|");
-        System.out.println
-                        ("      6 " +"  5 " +"  4 " +"  3 "+"  2 " +"  1   "+ "\n"
-                        + "    -------------------------" + "\n"                        
-                        +"    | " + this.lauta[12] + " | " + this.lauta[11] + " | " + this.lauta[10] + " | " + this.lauta[9] + " | " + this.lauta[8] + " | " + this.lauta[7] +" |   " +"\n"
-                + "| "+ this.lauta[13] +" |                       | " +  this.lauta[6] + " |" +"\n"
-                                + "    | " +this.lauta[0] + " | " + this.lauta[1] + " | " + this.lauta[2] + " | " + this.lauta[3] + " | " + this.lauta[4] + " | " + this.lauta[5] + " |    " + "\n"
-                       + "    -------------------------" + "\n"
-                       +"      1 " +"  2 " +"  3 " +"  4 "+"  5 " +"  6   ");
+         //System.out.println
+         pelitilanne =
+                        ("       6 " +"  5 " +"  4 " +"  3 "+"  2 " +"  1   "+ "\n"
+                        + "     -------------------------" + "\n"                        
+                        +"     | " + this.lauta[12] + " | " + this.lauta[11] + " | " + this.lauta[10] + " | " + this.lauta[9] + " | " + this.lauta[8] + " | " + this.lauta[7] +" |   " +"\n"
+                + " | "+ this.lauta[13] +" |                       | " +  this.lauta[6] + " |" +"\n"
+                                + "     | " +this.lauta[0] + " | " + this.lauta[1] + " | " + this.lauta[2] + " | " + this.lauta[3] + " | " + this.lauta[4] + " | " + this.lauta[5] + " |    " + "\n"
+                       + "     -------------------------" + "\n"
+                       +"       1 " +"  2 " +"  3 " +"  4 "+"  5 " +"  6   ");
             } 
 
 //----------VASTAPUOLELLA OLEVAN KUPIN INDEKSI-----------------------------------------------------------
