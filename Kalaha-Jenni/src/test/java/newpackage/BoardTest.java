@@ -37,26 +37,44 @@ public class BoardTest {
      * Test of teeSiirtoOikeasti method, of class Board.
      */
     @Test
-    public void testTeeSiirtoOikeasti() {  
+    public void siirtoToimiiPienillaLuvuilla() {  
         b.startBoard();
         int indeksi = 7;
-        int pelaaja = 2;
-        
+        int pelaaja = 2;        
         b.teeSiirtoOikeasti(indeksi, pelaaja);
-        assertEquals(b.lauta[11], 5);      
+        assertEquals(b.lauta[11], 5);        
+        b.teeSiirtoOikeasti(0, 1);
+        assertEquals(b.lauta[1], 5);
     }
     
     /**
      * Test of teeSiirtoOikeasti method, of class Board.
      */
     @Test
-    public void testTeeSiirtoOikeasti2() {  
+    public void siirtoToimiiKoneenIsoillaLuvuilla() {  
         b.startBoard();
-        b.lauta[7]=14;
         int indeksi = 7;
+        b.lauta[indeksi]=23;
         int pelaaja = 2;        
-        b.teeSiirtoOikeasti(indeksi, pelaaja); //ind 7 + 14 => ind 7 = 1
-        assertEquals(b.lauta[7], 1);     //laskee että olis nolla, mutta kuuluisi olla 1
+        b.teeSiirtoOikeasti(indeksi, pelaaja);         
+        assertEquals(b.lauta[7], 1);  
+       
+    }
+    
+    /**
+     * Test of teeSiirtoOikeasti method, of class Board.
+     */
+    @Test
+    public void siirtoToimiiPelaajanSuurillaLuvuilla(){
+        b.startBoard();
+        int indeksi = 2;
+        b.lauta[indeksi]=23;
+        b.printBoard();        
+        int pelaaja = 1;        
+        b.teeSiirtoOikeasti(indeksi, pelaaja); 
+        b.printBoard();
+        assertEquals(b.lauta[12], 6);
+        assertEquals(b.lauta[0], 5);
     }
 
     /**
@@ -69,8 +87,12 @@ public class BoardTest {
         int pelaaja = 2;
         
         b.teeSiirtoLeikisti(indeksi, pelaaja);
+        b.temp.printBoard();
+        b.printBoard();
         assertEquals(b.temp.lauta[11], 5); 
         assertEquals(b.lauta[11], 4);
+        b.temp.lauta[0]=10;
+        assertEquals(b.lauta[0], 4);
     }
 
     /**
@@ -139,13 +161,13 @@ public class BoardTest {
      */
     @Test
     public void testViimeisenKivenIndeksi() {        
-        int indeksi = 12;
+        int indeksi = 7;
         b.startBoard();
-        b.lauta[indeksi]=20;
+        b.lauta[indeksi]=23;
         //b.lauta[indeksi]=7; //tietokone siirtää
         //b.startBoard();
         b.viimeisenKivenIndeksi(indeksi);       
-        assertEquals(b.viimeinenKiviInd, 5);
+        assertEquals(b.viimeinenKiviInd, 3); //6
     }    
     
     @Test

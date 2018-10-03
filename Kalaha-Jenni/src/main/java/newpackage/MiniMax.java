@@ -15,35 +15,31 @@ public class MiniMax {
      * @return 6-paikkainen pistetaulu.
      */
     public static int[] minimax(int pelaaja, Board lauta) {
-
-        Board[] aliPuut = new Board[6];
-        lauta.uusiVuoro = false;
-
+        
+        int i, k;
+        
+        if (lauta.isGameOver()){
+            int[] pisteet=new int[6];
+                for(i=0; i<6; i++){ 
+                pisteet[i]=lauta.evaluate();
+            }
+                return pisteet;
+        }
+                
         int[] maksimit = new int[6];
         int[] minimit = new int[6];
 
-        int[] lisamaksimit;// = new int[6];
-        int[] lisaminimit;// = new int[6];
+        int[] lisamaksimit;
+        int[] lisaminimit;
 
-        int i, k;
+        //tehdään annetusta laudasta 6 kopiota
+        Board[] aliPuut = new Board[6];
+        lauta.uusiVuoro = false;
 
         for (i = 0; i < 6; i++) {
             aliPuut[i] = new Board();
         }
-
-        /*        if (lauta.isGameOver() && pelaaja == 1) {
-            for (i = 0; i < 6; i++) {
-                minimit[i] = lauta.evaluate();
-            }
-            //return minimit;
-        } 
-        else if (lauta.isGameOver() && pelaaja == 0) {
-            for (i = 0; i < 6; i++) {
-                maksimit[i] = lauta.evaluate();
-            }
-            //return maksimit;
-        }
-         */
+     
 //------------------------------------PELAAJA IHMINEN-----------------  
         if (pelaaja == 1) {
 
@@ -58,7 +54,6 @@ public class MiniMax {
                     aliPuut[i].lauta[j] = lauta.lauta[j];
                 }
 
-                //aliPuut[i].temp=aliPuut[i]; //tämä on jo sama, board konstruktorissa kopioitu
                 int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
 
                 int siirto = aliPuunSiirrot[i];
@@ -114,7 +109,7 @@ public class MiniMax {
                 maxLista[q] = -1000;
             }
 
-            //tutkitaan kaikki mahdolliset pelin etenemisvaihtoehdot
+            //tutkitaan pelitilanteen kaikki mahdolliset siirrot
             for (i = 0; i < 6; i++) {
 
                 for (int j = 0; j < 14; j++) {
