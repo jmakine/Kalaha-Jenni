@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package newpackage;
+package newpackage.gui;
 
 import java.awt.*;
 import javax.swing.*;
@@ -77,50 +77,48 @@ import java.awt.event.ActionEvent;
 import java.util.Arrays;
 
 public class Gui {
-    
-        JLabel pelinKulku;
-        JLabel pelilauta;
-        JTextField syote;              
-        JButton nappi;
-        int pelaajanLuku;
-        
+
+    JLabel pelinKulku;
+    JLabel pelilauta;
+    JTextField syote;
+    JButton nappi;
+    int pelaajanLuku;
 
     public static void main(String[] args) {
-        Board b = new Board();
-        b.startBoard();        
+        Gui gui = new Gui();
     }
 
-    public Gui(Board b) {
-        JFrame guiFrame = new JFrame();        
+    public Gui() {
+    }
+        
+
+    public void luoKomponentit(Container container) {
+        GridLayout layout = new GridLayout(3, 2);
+        container.setLayout(layout);
+        JFrame guiFrame = new JFrame();
+        layout.addLayoutComponent("Ok", nappi);
         guiFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         guiFrame.setTitle("Kalaha");
         guiFrame.setSize(300, 250);
         guiFrame.setLocationRelativeTo(null);
-        
-        
+
         //ylemmässä JPanel:ssa on kaksi JLabeliä: pelin ohjeistus ja pelilaudan tilanne
         final JPanel ohjeJApeliLauta = new JPanel();
-        ohjeJApeliLauta.setLayout(new GridLayout(2,1));
+        ohjeJApeliLauta.setLayout(new GridLayout(2, 1));
         pelinKulku = new JLabel("blaablaa"); //tähän aina nappia painamalla päivittyy tekstiä
-        pelilauta = new JLabel(b.pelitilanne); //kun tehdään siirto, päivittyy pelilauta=String
+        pelilauta = new JLabel(); //kun tehdään siirto, päivittyy pelilaudan pelitilanne=String
         ohjeJApeliLauta.add(pelinKulku);
         ohjeJApeliLauta.add(pelilauta);
         ohjeJApeliLauta.setVisible(true);
-        
 
         //Toinen JPanel sisältää napin ja syötekentän, jonka arvo otetaan käyttöön nappia painamalla
-        final JPanel syoteJaNappi = new JPanel();   
+        final JPanel syoteJaNappi = new JPanel();
         syoteJaNappi.setLocation(2, 1);
-        syote = new JTextField("Kirjoita tähän");              
+        syote = new JTextField("Kirjoita tähän");
         nappi = new JButton("Ok");
 
-        nappi.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-               pelaajanLuku = Integer.parseInt(syote.getText());
-               pelinKulku.setText(syote.getText());                
-            }
-        });
+        SiirtoKuuntelija kuuntelija = new SiirtoKuuntelija(syote, pelilauta);
+        nappi.addActionListener(kuuntelija);
         
         syoteJaNappi.add(syote);
         syoteJaNappi.add(nappi);
@@ -128,7 +126,13 @@ public class Gui {
 
         guiFrame.add(ohjeJApeliLauta, BorderLayout.NORTH);
         guiFrame.add(syoteJaNappi, BorderLayout.SOUTH);
-        
+
         guiFrame.setVisible(true);
     }
 }
+
+/*public void actionPerformed(ActionEvent event) {
+               pelaajanLuku = Integer.parseInt(syote.getText());
+               pelinKulku.setText(syote.getText());                
+            }
+}*/

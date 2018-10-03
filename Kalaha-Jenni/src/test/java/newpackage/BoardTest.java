@@ -52,11 +52,11 @@ public class BoardTest {
     @Test
     public void testTeeSiirtoOikeasti2() {  
         b.startBoard();
-        b.lauta[5]=14;
-        int indeksi = 5;
-        int pelaaja = 1;        
-        b.teeSiirtoOikeasti(indeksi, pelaaja); //ind 5 + 10 => ind 5 = 1
-        assertEquals(b.lauta[5], 1);     
+        b.lauta[7]=14;
+        int indeksi = 7;
+        int pelaaja = 2;        
+        b.teeSiirtoOikeasti(indeksi, pelaaja); //ind 7 + 14 => ind 7 = 1
+        assertEquals(b.lauta[7], 1);     //laskee että olis nolla, mutta kuuluisi olla 1
     }
 
     /**
@@ -139,12 +139,13 @@ public class BoardTest {
      */
     @Test
     public void testViimeisenKivenIndeksi() {        
-        int indeksi = 5;
+        int indeksi = 12;
         b.startBoard();
-        b.lauta[indeksi]=7; //tietokone siirtää
+        b.lauta[indeksi]=20;
+        //b.lauta[indeksi]=7; //tietokone siirtää
         //b.startBoard();
         b.viimeisenKivenIndeksi(indeksi);       
-        assertEquals(b.viimeinenKiviInd, 12);
+        assertEquals(b.viimeinenKiviInd, 5);
     }    
     
     @Test

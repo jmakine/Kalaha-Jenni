@@ -117,6 +117,7 @@ public class Main {
                 board.teeSiirtoOikeasti(koneSiirtaa, vuoro); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board?
                 System.out.println("Siirron jälkeen tilanne:");
                 board.printBoard();
+                System.out.println(board.pelitilanne);
 
                 if (!board.uusiVuoro) {
                     vuoro = 1;
@@ -142,7 +143,8 @@ public class Main {
                 board.teeSiirtoOikeasti(siirto, 1); //päivittää parametrin uusiVuoro
 
                 System.out.println("Pelitilanne: ");
-                board.printBoard();
+                board.printBoard(); //päivittää laudan pelitilanteen -> string
+                System.out.println(board.pelitilanne);
 
                 if (board.isGameOver(1)) {
                     //vuoro = 2;
