@@ -23,15 +23,12 @@ public class Main {
     public static void main(String[] args) {
         
         Board board = new Board();
-        //Gui gui = new Gui(board);
-        
-        //int syote = gui.pelaajanLuku;
+       
         Scanner input = new Scanner(System.in);
         
         int[] maxpisteet = new int[6];
        
         //aloittaja arvotaan:
-        //gui.pelinKulku.setText("Arvotaan aloittaja, valitse 1 tai 0: ");
         System.out.println("Arvotaan aloittaja, valitse 1 tai 0");
 
 //--------------ALOITTAJA ARVOTAAN----------------------------
@@ -97,7 +94,7 @@ public class Main {
             while (vuoro == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                maxpisteet = MiniMax.minimax(2, board);
+                maxpisteet = MiniMax.minimax(2, board, 0);
                 System.out.println(maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
 
                 //kone siirtää siitä kiposta, jonka pisteet on korkeimmat

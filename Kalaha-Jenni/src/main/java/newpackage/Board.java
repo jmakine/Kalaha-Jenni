@@ -152,7 +152,7 @@ public class Board {
             mancala = 13;
 
             this.viimeisenKivenIndeksi(indeksi); //->this.viimeinenKiviInd
-            System.out.println("Viimeisen kiven indeksi: " + this.viimeinenKiviInd);
+           // System.out.println("Viimeisen kiven indeksi: " + this.viimeinenKiviInd);
 
             if (indeksi + kiviaKipossa >= 20 && indeksi + kiviaKipossa < 34) {
                 kiviaKipossa += 1;
@@ -211,12 +211,16 @@ public class Board {
             int a = this.lauta[i];
             this.temp.lauta[i] = a;
         }
+        
+        //viimeisen kiven indeksi tähän?
+        this.viimeisenKivenIndeksi(indeksi);
 
         if (pelaaja == HUMAN) {
 
             mancala = 6;
 
-            this.viimeisenKivenIndeksi(indeksi);
+            //this.viimeisenKivenIndeksi(indeksi);
+            //System.out.println(this.temp.viimeinenKiviInd);
 
             //tyhjennetään valittu kippo
             this.temp.lauta[indeksi] = 0;
@@ -257,10 +261,12 @@ public class Board {
 
         } 
         else if (pelaaja == COMPUTER) {
+            //System.out.println("pelaaja = " + pelaaja);
 
             mancala = 13;
 
-            this.viimeisenKivenIndeksi(indeksi); //->this.viimeinenKiviInd
+            //this.viimeisenKivenIndeksi(indeksi); //->this.viimeinenKiviInd
+            //System.out.println("\tViimeisen kiven indeksi: "+this.temp.viimeinenKiviInd);
             
             if (indeksi + kiviaKipossa >= 20 && indeksi + kiviaKipossa < 34) {
                 kiviaKipossa += 1;
@@ -272,11 +278,12 @@ public class Board {
             this.temp.lauta[indeksi] = 0;
 
             for (int i = indeksi + 1; i <= indeksi + kiviaKipossa; i++) {
+                //System.out.println("siirretään kuppiin, indeksi "+i);
 
-                if (i < 13) {
+                if (i <= 13) {
                     this.temp.lauta[i]++;
                 }
-                if (i > 13 && i < 27) {
+                if ((i > 13 && i < 20) || (i>20 && i<=27)) {
                     this.temp.lauta[i - 14]++;
                 }
                 if (i > 27) {
@@ -448,16 +455,17 @@ public class Board {
         b.lauta[1] = 25;
         b.printBoard();
         int indeksi = 1;
-        int pelaaja = 1;
-        /*Board board = new Board();
-        Board b = new Board();
-        board.startBoard();
-        b.lauta=board.lauta;*/
-        // System.arraycopy(board.lauta, 0, b.lauta, 0, 14);        
-        //b.printBoard();
-
+        int pelaaja = 1;        
         b.teeSiirtoOikeasti(indeksi, pelaaja);
-        System.out.println(b.viimeinenKiviInd);
+        System.out.println(b.viimeinenKiviInd);        
         b.printBoard();
+        
+        b.teeSiirtoLeikisti(7, 2);
+        b.printBoard();
+        b.temp.printBoard();
+        System.out.println(b.temp.uusiVuoro);
+        b.temp.teeSiirtoLeikisti(11, 2);
+        b.temp.temp.printBoard();
+        
     }
 }

@@ -161,13 +161,13 @@ public class BoardTest {
      */
     @Test
     public void testViimeisenKivenIndeksi() {        
-        int indeksi = 7;
+        int indeksi = 2;
         b.startBoard();
-        b.lauta[indeksi]=23;
+        //b.lauta[indeksi]=4;
         //b.lauta[indeksi]=7; //tietokone siirtää
         //b.startBoard();
         b.viimeisenKivenIndeksi(indeksi);       
-        assertEquals(b.viimeinenKiviInd, 3); //6
+        assertEquals(b.viimeinenKiviInd, 6); //6
     }    
     
     @Test
