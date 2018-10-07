@@ -21,7 +21,7 @@ public class MiniMax {
 
         int i, k;
 
-        if (lauta.isGameOver()) {
+        if (lauta.isGameOver() || deapth==0) {
             int[] pisteet = new int[6];
             for (i = 0; i < 6; i++) {
                 pisteet[i] = lauta.evaluate();
@@ -49,14 +49,19 @@ public class MiniMax {
             System.out.println("pelaaja = " + pelaaja);
             System.out.println("syvyys = " + deapth);
 
-            int minLista[] = new int[6];
+            /*int minLista[] = new int[6];
             for (int q = 0; q < 6; q++) {
                 minLista[q] = 1000;
             }
 
             if (lauta.isGameOver()) {
+                System.out.println("peli ohi, palautetaan [1000,...,1000] lista");
                 return minLista;
-            }
+            }*/
+            int min=1000;
+
+            int[] aliPuunSiirrot = lauta.mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
+            System.out.println("\tMahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
 
             for (i = 0; i < 6; i++) {
 
@@ -64,9 +69,8 @@ public class MiniMax {
                     aliPuut[i].lauta[j] = lauta.lauta[j];
                 }
 
-                int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
+                //  int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
                 System.out.println("\tMahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
-
                 int siirto = aliPuunSiirrot[i];
 
                 if (siirto == 1) { //siirto sallittu //ENUM! 
@@ -78,67 +82,79 @@ public class MiniMax {
                     System.out.println(aliPuut[i].temp.uusiVuoro);
 
                     //jos siirrolla ei saa uutta vuoroa, eikä peli ole ohi, siirtyy vuoro toiselle pelaajalle
-                    if (!aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver()) {
+                    if (!aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver() && deapth!=0) {
 
                         System.out.println("\tSiirrolla ei saisi uutta vuoroa, peli jatkuisi");
 
-                        maksimit = minimax(pelaaja + 1, aliPuut[i].temp, deapth++); //tietokoneen vuoro palauttaa maksimit
+                        maksimit = minimax(pelaaja + 1, aliPuut[i].temp, deapth--); //tietokoneen vuoro palauttaa maksimit
                         System.out.println("Syvyys = " + deapth);
 
                         //valitaan maksimeista pienin ja asetetaan se minListaan
                         for (k = 0; k < 6; k++) {
-                            if (maksimit[k] < minLista[i]) {
-                                minLista[i] = maksimit[k];
+                            if (maksimit[k] < min){//minLista[i]) {
+                                //minLista[i] = 
+                                min=maksimit[k];
                             }
                         }
                         //System.out.println("\tMinimitauluun kohtaan "+i+" tulee " +minLista[i]);
-                        minimit[i] = minLista[i];
+                        minimit[i] = min;//minLista[i];
 
-                    } else if (aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver()) {
+                    } else if (aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver() && deapth!=0) {
 
                         System.out.println("\tSaisi uuden vuoron, peli jatkuisi");
 
-                        lisaminimit = minimax(pelaaja, aliPuut[i].temp, deapth++);
+                        lisaminimit = minimax(pelaaja, aliPuut[i].temp, deapth--);
                         System.out.println("Syvyys = " + deapth);
 
                         for (int j = 0; j < 6; j++) {
-                            if (lisaminimit[j] < minLista[i]) {
-                                minLista[i] = lisaminimit[j];
+                            if (lisaminimit[j] < min){//minLista[i]) {
+                                //minLista[i] 
+                                min= lisaminimit[j];
                             }
                         }
                         //System.out.println("minimitauluun kohtaan "+i+" tulee " +minLista[i]);
-                        minimit[i] = minLista[i];
+                        minimit[i] = min;// minLista[i];
 
-                    } else if (aliPuut[i].temp.isGameOver()) {
-                        System.out.println("\tSiirron jälkeen peli olisi ohi");
-                        minimit[i] = aliPuut[i].temp.evaluate();
+                    } else if (aliPuut[i].isGameOver()) {
+                        System.out.println("\tSiirron jälkeen peli olisi ohi ja arvoksi kohtaan "+i+" tulisi "+aliPuut[i].evaluate());
+                        minimit[i] = aliPuut[i].evaluate();
                     }
-                    minLista[i] = 1000;
+                    else if (deapth==0){
+                        System.out.println("Syvyys nolla!");
+                        minimit[i]=aliPuut[i].temp.evaluate();
+                    }
+                    
+                    min=1000;//minLista[i] = 1000;
 
                 } else if (siirto == 0) {
                     //System.out.println("\tSiirto kupista "+i+" ei olisi sallittu");
-                    //minimit[i] = -1000;//aliPuut[i].evaluate();
-                }
+                    minimit[i] = 1000;//aliPuut[i].evaluate();
+                } 
 
             }
 
-            //System.out.println("Lopulta palautetaan minimit: "+ Arrays.toString(minimit));
+            System.out.println("Lopulta palautetaan minimit: "+ Arrays.toString(minimit));
             return minimit;
 
-        } //-----------------------TIETOKONEEN SIIRTO-------------------------------------
+        } 
+//-----------------------TIETOKONEEN SIIRTO-------------------------------------
         else { //if pelaaja=2
 
             System.out.println("pelaaja = " + pelaaja);
             System.out.println("syvyys = " + deapth);
 
-            int[] maxLista = new int[6];
+            /*int[] maxLista = new int[6];
             for (int q = 0; q < 6; q++) {
                 maxLista[q] = -1000;
-            }
+            }*/
 
-            if (lauta.isGameOver()) {
+            /*if (lauta.isGameOver()) {
                 return maxLista;
-            }
+            }*/
+            int max=-1000;
+            
+            int[] aliPuunSiirrot = lauta.mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
+            System.out.println("Mahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
 
             //tutkitaan pelitilanteen kaikki mahdolliset siirrot
             for (i = 0; i < 6; i++) {
@@ -147,9 +163,8 @@ public class MiniMax {
                     aliPuut[i].lauta[j] = lauta.lauta[j];
                 }
 
-                int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0, 1, 0, 1, 1, 1]
+                //int[] aliPuunSiirrot = aliPuut[i].mahdollisetSiirrot(pelaaja); //[0, 1, 0, 1, 1, 1]
                 System.out.println("Mahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
-
                 int siirto = aliPuunSiirrot[i];
 
                 if (siirto == 1) {
@@ -158,55 +173,83 @@ public class MiniMax {
                     aliPuut[i].teeSiirtoLeikisti(12 - i, pelaaja);
                     aliPuut[i].temp.printBoard();
 
-                    if (!aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver()) {
+                    if (!aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver() && deapth!=0) {
 
                         System.out.println("\tSiirrolla ei saisi uutta vuoroa, peli jatkuisi");
 
-                        minimit = minimax(pelaaja - 1, aliPuut[i].temp, deapth++);
+                        minimit = minimax(pelaaja - 1, aliPuut[i].temp, deapth--);
                         System.out.println("Syvyys = " + deapth);
 
                         for (k = 0; k < 6; k++) {
-                            if (minimit[k] > maxLista[i]) {
-                                maxLista[i] = minimit[k];
+                            if (minimit[k] > max){// maxLista[i]) {
+                                //maxLista[i] 
+                                max = minimit[k];
                             }
 
                         }
                         //System.out.println("maksimitauluun kohtaan "+i+" tulee " +maxLista[i]);
 
-                        maksimit[i] = maxLista[i];
+                        maksimit[i] = max;// maxLista[i];
 
-                    } else if (aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver()) {
+                    } else if (aliPuut[i].temp.uusiVuoro && !aliPuut[i].temp.isGameOver() && deapth!=0) {
 
                         System.out.println("\tSiirrolla saisi uuden vuoron, peli jatkuisi");
 
-                        lisamaksimit = minimax(pelaaja, aliPuut[i].temp, deapth++);
+                        lisamaksimit = minimax(pelaaja, aliPuut[i].temp, deapth--);
                         System.out.println("Syvyys = " + deapth);
 
                         for (int j = 0; j < 6; j++) {
-                            if (lisamaksimit[j] > maxLista[i]) {
-                                maxLista[i] = lisamaksimit[j];
+                            if (lisamaksimit[j] > max){// maxLista[i]) {
+                                //maxLista[i] 
+                                max = lisamaksimit[j];
                             }
                         }
                         //System.out.println("maksimitauluun kohtaan "+i+" tulee " +maxLista[i]);
 
-                        maksimit[i] = maxLista[i];
+                        maksimit[i] = max;//maxLista[i];
 
                     } else if (aliPuut[i].temp.isGameOver()) {
                         System.out.println("\tSiirron jälkeen peli olisi ohi");
                         maksimit[i] = aliPuut[i].temp.evaluate();
+                    } else if (deapth==0){
+                        System.out.println("Syvyys nolla: ");
+                        maksimit[i]=aliPuut[i].temp.evaluate();
                     }
 
-                    maxLista[i] = -1000;
+                    //maxLista[i] 
+                    max = 1000;
                 } else if (siirto == 0) {
                     //System.out.println("\tSiirto kupista "+(12-i)+" ei olisi sallittu");
-                    //maksimit[i] = 1000;//aliPuut[i].evaluate();
+                    maksimit[i] = 1000;//aliPuut[i].evaluate();
                 }
             }
-            //System.out.println("lopulta palautetaan maksimit: "+ Arrays.toString(maksimit));
+            System.out.println("lopulta palautetaan maksimit: "+ Arrays.toString(maksimit));
             return maksimit;
         }
 
     }
+    
+    /*public static int[] minimoiJaVuoroSiirtyy(Board b){
+       // if (!b.temp.uusiVuoro && !b.temp.isGameOver()) {
+
+            int minimit[]=new int[6];//{1000, 1000, 1000, 1000, 1000, 1000};
+                        System.out.println("\tSiirrolla ei saisi uutta vuoroa, peli jatkuisi");
+
+                        minimit = minimax(2, b.temp, 0);
+                        //System.out.println("Syvyys = " + deapth);
+
+                        int max=-1000;
+                        for (int i = 0; i < 6; i++) {
+                            if (minimit[i] > max){// maxLista[i]) {
+                                //maxLista[i] 
+                                max = minimit[k];
+                            }
+                        }
+                        
+                        //System.out.println("maksimitauluun kohtaan "+i+" tulee " +maxLista[i]);
+
+                        //maksimit[i] = max;// maxLista[i];
+    }*/
 
     public static void main(String[] args) {
         Board b = new Board();
@@ -221,7 +264,7 @@ public class MiniMax {
         b.printBoard();
         int pelaaja = 1;
         int[] human, machine;//=new int[6];
-        human = minimax(pelaaja, b, 0);
+        human = minimax(pelaaja, b, 1);
         System.out.println(Arrays.toString(human)); //ihmisen minmax -> [2, 2, 2, 2, 2, 6] eli ihminen maximoi mahdollisuutensa 
         //machine = minimax(pelaaja + 1, b);
         //System.out.println(Arrays.toString(machine));

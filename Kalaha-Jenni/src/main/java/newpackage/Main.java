@@ -94,8 +94,8 @@ public class Main {
             while (vuoro == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                maxpisteet = MiniMax.minimax(2, board, 0);
-                System.out.println(maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
+                maxpisteet = MiniMax.minimax(2, board, 3);
+                System.out.println("\tMinimax palauttaa maksimipisteet"+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
 
                 //kone siirtää siitä kiposta, jonka pisteet on korkeimmat
                 int koneSiirtaa = -1;
@@ -114,8 +114,8 @@ public class Main {
                 System.out.println(board.pelitilanne);
 
                 if (!board.uusiVuoro) {
-                    //vuoro = 1;
-                    break;
+                    vuoro = 1;
+                    //break;
                 }
 
                 if (board.isGameOver()) {

@@ -212,7 +212,6 @@ public class Board {
             this.temp.lauta[i] = a;
         }
         
-        //viimeisen kiven indeksi tähän?
         this.viimeisenKivenIndeksi(indeksi);
 
         if (pelaaja == HUMAN) {
