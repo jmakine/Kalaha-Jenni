@@ -53,8 +53,7 @@ public class Main {
         board.startBoard();
         board.printBoard();
 
-//----------KONEEN ENSIMMÄINEN SIIRTO (->SAA UUDEN VUORON)----------------
-//----------PELAAJAN ENSIMMÄINEN SIIRTO (JA MAHDOLLISESTI TOINENKIN)---------
+//----------ENSIMMÄINEN SIIRTO (JA MAHDOLLISESTI TOINENKIN)---------
        
         if (aloittaja == 2) {
             //aloittajan kannattaa aloittaa kupista 3
@@ -64,8 +63,7 @@ public class Main {
             //tällä siirrolla saa uuden vuoron
             System.out.println("Saan uuden vuoron:");
         } 
-        else //pelaaja aloittaa 
-        {
+        else { //
             System.out.println("Valitse siirto kupeista 1-6:");
             int ekaSiirto = input.nextInt() - 1;
             board.teeSiirtoOikeasti(ekaSiirto, aloittaja);
@@ -84,26 +82,23 @@ public class Main {
 //-------------------------------VUORO JÄI TIETOKONEELLE--------------------------------------
         int vuoro = 2;
 
-        System.out.println("Peli loppu: " + board.isGameOver());
-
         while (!board.isGameOver()) {
 
             board.uusiVuoro=true;
             
-            //koneen vuoro:
             while (vuoro == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                maxpisteet = MiniMax.minimax(2, board, 3);
-                System.out.println("\tMinimax palauttaa maksimipisteet"+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
+                maxpisteet = MiniMax.minimax(2, board, 7); //ensimmäinen indeksi maxpisteissä on laudan indeksin 12 lasketut pisteet
+                System.out.println("\tMinimax palauttaa maksimipisteet "+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
 
-                //kone siirtää siitä kiposta, jonka pisteet on korkeimmat
+                //kone siirtää siitä kiposta, jonka pisteet on korkeimmat, ja joka ei ole tyhjä
                 int koneSiirtaa = -1;
                 int max=-1000;
                 for (int r = 0; r < 6; r++){
-                    if (maxpisteet[r] > max && board.lauta[r + 7] != 0) {
+                    if (maxpisteet[r] > max && board.lauta[12-r]!=0){//r + 7] != 0) {
                         max = maxpisteet[r];
-                        koneSiirtaa = r + 7;
+                        koneSiirtaa = 12-r;
                     }
                 }
                 
@@ -111,8 +106,7 @@ public class Main {
                 board.teeSiirtoOikeasti(koneSiirtaa, vuoro); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board?
                 System.out.println("Siirron jälkeen tilanne:");
                 board.printBoard();
-                System.out.println(board.pelitilanne);
-
+                
                 if (!board.uusiVuoro) {
                     vuoro = 1;
                     //break;
@@ -138,7 +132,7 @@ public class Main {
 
                 System.out.println("Pelitilanne: ");
                 board.printBoard(); //päivittää laudan pelitilanteen -> string
-                System.out.println(board.pelitilanne);
+                //System.out.println(board.pelitilanne);
 
                 if (board.isGameOver()) {
                     //vuoro = 2;

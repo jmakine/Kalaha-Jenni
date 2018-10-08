@@ -23,7 +23,7 @@ public class Board {
     public boolean uusiVuoro;
     public Board temp;
     int pistetilanne;
-    String pelitilanne;
+    //String pelitilanne;
 
     /**
      * Pelaaja 1 on aina ihminen.
