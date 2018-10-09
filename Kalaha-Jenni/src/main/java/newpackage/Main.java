@@ -89,7 +89,7 @@ public class Main {
             while (vuoro == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                maxpisteet = MiniMax.minimax(2, board, 7); //ensimmäinen indeksi maxpisteissä on laudan indeksin 12 lasketut pisteet
+                maxpisteet = MiniMax.minimax(2, board, 8, -1000, 1000); //ensimmäinen indeksi maxpisteissä on laudan indeksin 12 lasketut pisteet
                 System.out.println("\tMinimax palauttaa maksimipisteet "+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
 
                 //kone siirtää siitä kiposta, jonka pisteet on korkeimmat, ja joka ei ole tyhjä
