@@ -294,7 +294,7 @@ public class Board {
                     this.temp.uusiVuoro = true;
                 } //jos osuu tyhjään omaan kippoon, saa myös vastapuolen kipon kivet            
                 else if (this.viimeinenKiviInd < mancala && this.viimeinenKiviInd > 6 && this.temp.lauta[this.viimeinenKiviInd] == 1) {
-                    int vastapuolenIndeksi = vastapuolenInd(this.temp.viimeinenKiviInd);
+                    int vastapuolenIndeksi = vastapuolenInd(this.viimeinenKiviInd);
                     this.temp.lauta[this.viimeinenKiviInd] = 0;
                     this.temp.lauta[mancala] += this.temp.lauta[vastapuolenIndeksi] + 1;
                     this.temp.lauta[vastapuolenIndeksi] = 0;
