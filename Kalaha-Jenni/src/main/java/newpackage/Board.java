@@ -91,7 +91,7 @@ public class Board {
     public void teeSiirtoOikeasti(int indeksi, int pelaaja) { //boolean
 
         int kiviaKipossa = this.lauta[indeksi];
-        System.out.println("Kiviä kipossa: " + kiviaKipossa);
+        //System.out.println("Kiviä kipossa: " + kiviaKipossa);
         int mancala;
 
         if (pelaaja == HUMAN) {
@@ -99,6 +99,7 @@ public class Board {
 
             this.viimeisenKivenIndeksi(indeksi);
 
+            //if(this.lauta[indeksi]==0 || indeksi > 6 || indeksi < 0){
             do {
                 if (this.lauta[indeksi] == 0) {
                     System.out.println("Et voi tehdä siirtoa tyhjästä kiposta. Valitse uudelleen.");

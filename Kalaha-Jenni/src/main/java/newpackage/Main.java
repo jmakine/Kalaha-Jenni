@@ -47,6 +47,7 @@ public class Main {
             aloittaja = 1;
             System.out.println("Peli alkaa, saat aloittaa");
         }
+        int pelaaja=aloittaja;
 
 //-----------PELI ALKAA---------------------------------------
         //Asetetaan pelilaudalle aloitustilanne
@@ -55,7 +56,7 @@ public class Main {
 
 //----------ENSIMMÄINEN SIIRTO (JA MAHDOLLISESTI TOINENKIN)---------
        
-        if (aloittaja == 2) {
+        /*if (aloittaja == 2) {
             //aloittajan kannattaa aloittaa kupista 3
             System.out.println("Kone aloittaa kupista 3");
             board.teeSiirtoOikeasti(9, aloittaja); 
@@ -76,58 +77,68 @@ public class Main {
                 board.teeSiirtoOikeasti(tokaSiirto, aloittaja);
                 board.printBoard();
             }
-        }
+        }*/
 
 //------------------TÄSTÄ PELI JATKAA ENSIMMÄISEN TAI ENSIMMÄISTEN SIIRTOJEN JÄLKEEN-----------------
 //-------------------------------VUORO JÄI TIETOKONEELLE--------------------------------------
-        int vuoro = 2;
+     //   int vuoro = 2;
 
         while (!board.isGameOver()) {
 
             board.uusiVuoro=true;
             
-            while (vuoro == 2 && board.uusiVuoro) {
+            while (pelaaja == 2 && board.uusiVuoro) {
                 board.uusiVuoro = false;
 
-                maxpisteet = MiniMax.minimax(2, board, -1000, 1000); //ensimmäinen indeksi maxpisteissä on laudan indeksin 12 lasketut pisteet
-                System.out.println("\tMinimax palauttaa maksimipisteet "+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
+                maxpisteet = MiniMax.minimax(2, board, 0, -1000, 1000); //ensimmäinen indeksi maxpisteissä on laudan indeksin 12 lasketut pisteet
+                //System.out.println("\tMinimax palauttaa maksimipisteet "+maxpisteet[0] + " " + maxpisteet[1] + " " + maxpisteet[2] + " " + maxpisteet[3] + " " + maxpisteet[4] + " " + maxpisteet[5]);
 
                 //kone siirtää siitä kiposta, jonka pisteet on korkeimmat, ja joka ei ole tyhjä
                 int koneSiirtaa = -1;
                 int max=-1000;
                 for (int r = 0; r < 6; r++){
-                    if (maxpisteet[r] > max && board.lauta[12-r]!=0){//r + 7] != 0) {
+                    if (maxpisteet[r] > max && board.lauta[12-r]!=0 && maxpisteet[r]!=1000){//r + 7] != 0) {
                         max = maxpisteet[r];
                         koneSiirtaa = 12-r;
                     }
                 }
                 
                 System.out.println("Kone siirtää kupista " + (koneSiirtaa - 6));
-                board.teeSiirtoOikeasti(koneSiirtaa, vuoro); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board?
+                board.teeSiirtoOikeasti(koneSiirtaa, pelaaja); //uusiVuoro -> true jos saa uuden vuoron, päivittää: temp.board=board?
                 System.out.println("Siirron jälkeen tilanne:");
                 board.printBoard();
                 
-                if (!board.uusiVuoro) {
-                    vuoro = 1;
-                    //break;
-                }
-
                 if (board.isGameOver()) {
                     break;
                 }
+                
+                if(board.uusiVuoro){
+                    System.out.println("Saan uuden vuoron");
+                } else{ 
+                    pelaaja = 1;                    
+                } 
             }
 
             board.uusiVuoro=true;
             
 //-----------------------pelaajan vuoro-----------------------
-            while (vuoro == 1 && board.uusiVuoro) {
+            while (pelaaja == 1 && board.uusiVuoro) {
 
                 board.uusiVuoro = false;
 
                 System.out.println("Valitse siirtosi: ");
                 int siirto = input.nextInt() - 1;
 
-                System.out.println("Valitsit " + (siirto + 1));
+                //System.out.println("Valitsit " + (siirto + 1));
+                while((siirto+1)>6 || (siirto+1)<0){                    
+                    System.out.println("Voit valita kipoista 1-6.\nValitse uudelleen:");
+                    siirto=input.nextInt()-1;
+                }
+                while(board.lauta[siirto] == 0) {
+                    System.out.println("Et voi tehdä siirtoa tyhjästä kiposta.\nValitse uudelleen.");
+                    siirto = input.nextInt()-1;
+                }
+                
                 board.teeSiirtoOikeasti(siirto, 1); //päivittää parametrin uusiVuoro
 
                 System.out.println("Pelitilanne: ");
@@ -139,10 +150,10 @@ public class Main {
                     break;
                 }
 
-                if (board.uusiVuoro && !board.isGameOver()) {
+                if (board.uusiVuoro) {
                     System.out.println("Saat uuden vuoron:");
                 } else {
-                    vuoro = 2;
+                    pelaaja = 2;
                 }
             }
             

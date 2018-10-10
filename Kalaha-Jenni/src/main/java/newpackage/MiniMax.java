@@ -10,12 +10,13 @@ public class MiniMax {
     /**
      * Minimax-algoritmi palauttaa pisteet kullekkin mahdolliselle siirrolle
      * lähtötilanteesta.
-     *
-     * @param pelaaja on joko 1=ihminen tai 2=tietokone
-     * @param lauta on se pelilauta, jolle minimax suoritetaan.
+     * @param alpha 
+     * @param beta
+     * @param pelaaja ihminen(1) tai tietokone(2)
+     * @param lauta pelilauta, jolle minimax suoritetaan.
      * @return 6-paikkainen pistetaulu.
      */
-    public static int[] minimax(int pelaaja, Board lauta, int alpha, int beta) {
+    public static int[] minimax(int pelaaja, Board lauta, int deapth, int alpha, int beta) {
         //Metodia kutsutaan minimax(1 tai 2, Board, 0, -1000, 1000)
         //System.out.println("Kutsuttu: minimax(" + pelaaja + "," + Arrays.toString(lauta.lauta) + ")");
 
@@ -28,7 +29,16 @@ public class MiniMax {
 
         int[] lisamaksimit;
         int[] lisaminimit;
-
+        
+        //loppu
+        int[] pisteet=new int[6];
+        if(deapth==20 || lauta.isGameOver()){
+            for(i=0; i<6;i++){
+                    pisteet[i]=lauta.evaluate();
+                }
+            return pisteet;
+        }
+        
         //tehdään annetusta laudasta 6 kopiota
         Board[] aliPuut = new Board[6];
         for (i = 0; i < 6; i++) {
@@ -37,32 +47,33 @@ public class MiniMax {
                 aliPuut[i].lauta[j] = lauta.lauta[j];
             }
         }
+        
 
         lauta.uusiVuoro = false;
         int[] aliPuunSiirrot = lauta.mahdollisetSiirrot(pelaaja); //[0,0,1,1,0,1]
 
 //------------------PELAAJA PALAUTTAA MINIMIT-----------------  
-        if (pelaaja == 1) {
-
+        if (pelaaja == 1) {          
+            
             //System.out.println("\tMahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
             for (i = 0; i < 6; i++) {
-
+                
                 int siirto = aliPuunSiirrot[i];
 
                 if (siirto == 1) { //siirto sallittu //ENUM! 
-                    System.out.println("siirto kupista indeksillä " + (i) + " on sallittu, tehdään siirto leikisti:");
+                    //System.out.println("siirto kupista indeksillä " + (i) + " on sallittu, tehdään siirto leikisti:");
 
                     aliPuut[i].teeSiirtoLeikisti(i, pelaaja); //päivittää aliPuut[i].temp -lautaa
 
-                    aliPuut[i].temp.printBoard();
+                    //aliPuut[i].temp.printBoard();
 
                     if (aliPuut[i].temp.isGameOver()) {
                         minimit[i] = aliPuut[i].temp.evaluate();
                     } //ei saa uutta vuoroa
                     else if (!aliPuut[i].temp.uusiVuoro) {// && !aliPuut[i].temp.isGameOver() && deapth!=0) {
 
-                        System.out.println("Siirrolla ei saa uutta vuoroa");
-                        maksimit = minimax(pelaaja + 1, aliPuut[i].temp, alpha, beta); //tietokoneen vuoro palauttaa maksimit
+                        //System.out.println("Siirrolla ei saa uutta vuoroa");
+                        maksimit = minimax(pelaaja + 1, aliPuut[i].temp, deapth+1, alpha, beta); //tietokoneen vuoro palauttaa maksimit
 
                         //pelaaja valitsee maksimeista pienimmän
                         for (k = 0; k < 6; k++) {
@@ -72,23 +83,23 @@ public class MiniMax {
                             }
                         }
 
-                        System.out.println("\tMinimitauluun kohtaan " + i + " tulee " + min);
+                        //System.out.println("\tMinimitauluun kohtaan " + i + " tulee " + min);
 
                         beta = Math.min(beta, minimit[i]);
                         if (beta <= alpha) {
-                            System.out.println("beta<=alfa, ei tutkita");
+                            //System.out.println("beta<=alfa, ei tutkita");
                             for (j = i + 1; j < 6; j++) {
-                                minimit[j] = 1000;
+                                minimit[j] = aliPuut[i].temp.evaluate();//1000;
                             }
-                            System.out.println("Palautetaan minimit: " + Arrays.toString(minimit));
+                            //System.out.println("Palautetaan minimit: " + Arrays.toString(minimit));
                             return minimit;
                         }
 
                     }                    
                     else if (aliPuut[i].temp.uusiVuoro) {
                         
-                        System.out.println("Siirrolla saa uuden vuoron ");
-                        lisaminimit = minimax(pelaaja, aliPuut[i].temp, alpha, beta);
+                        //System.out.println("Siirrolla saa uuden vuoron ");
+                        lisaminimit = minimax(pelaaja, aliPuut[i].temp, deapth+1, alpha, beta);
                         
                         //pelaaja valitsee lisäsiirron palauttamista minimeistä pienimmän
                         for (j = 0; j < 6; j++) {
@@ -97,15 +108,15 @@ public class MiniMax {
                                 minimit[i] = min;
                             }
                         }
-                        System.out.println("minimitauluun kohtaan " + i + " tulee " + min);
+                        //System.out.println("minimitauluun kohtaan " + i + " tulee " + min);
 
                         beta = Math.min(beta, minimit[i]);
                         if (beta <= alpha) {
-                            System.out.println("beta<=alfa, ei tutkita");
+                            //System.out.println("beta<=alfa, ei tutkita");
                             for (j = i + 1; j < 6; j++) {
-                                minimit[j] = 1000;
+                                minimit[j] = aliPuut[i].temp.evaluate();//1000;
                             }
-                            System.out.println("Palautetaan minimit: " + Arrays.toString(minimit));
+                            //System.out.println("Palautetaan minimit: " + Arrays.toString(minimit));
                             return minimit;
                         }
                     }
@@ -113,13 +124,13 @@ public class MiniMax {
 
                 }//siirto ei ole sallittu
                 else if (siirto == 0) {
-                    System.out.println("\tSiirto kupista " + i + " ei olisi sallittu");
+                    //System.out.println("\tSiirto kupista " + i + " ei olisi sallittu");
                     minimit[i] = -1000;
                 }
 
             }
 
-            System.out.println("Lopulta palautetaan minimit: " + Arrays.toString(minimit));
+            //System.out.println("Lopulta palautetaan minimit: " + Arrays.toString(minimit));
             return minimit;
 
 //-----------------------TIETOKONE PALAUTTAA MAKSIMIT-------------------------------------
@@ -127,23 +138,23 @@ public class MiniMax {
         } else {
 
             for (i = 0; i < 6; i++) {
-
+                
                 int siirto = aliPuunSiirrot[i];
 
                 if (siirto == 1) {
 
-                    System.out.println("siirto kupista(indeksi) " + (12 - i) + " on sallittu, tehdään siirto leikisti:");
+                    //System.out.println("siirto kupista(indeksi) " + (12 - i) + " on sallittu, tehdään siirto leikisti:");
                     aliPuut[i].teeSiirtoLeikisti(12 - i, pelaaja);
-                    aliPuut[i].temp.printBoard();
+                    //aliPuut[i].temp.printBoard();
 
                     if (aliPuut[i].temp.isGameOver()) {
                         maksimit[i] = aliPuut[i].temp.evaluate();
                     
                     } else if (!aliPuut[i].temp.uusiVuoro) {
 
-                        System.out.println("\tSiirrolla ei saisi uutta vuoroa, peli jatkuisi");
+                        //System.out.println("\tSiirrolla ei saisi uutta vuoroa, peli jatkuisi");
 
-                        minimit = minimax(pelaaja - 1, aliPuut[i].temp, alpha, beta);
+                        minimit = minimax(pelaaja - 1, aliPuut[i].temp, deapth+1, alpha, beta);
 
                         //kone valitsee pelaajan palauttammista minimeistä suurimman
                         for (k = 0; k < 6; k++) {
@@ -155,21 +166,21 @@ public class MiniMax {
 
                         alpha = Math.max(alpha, maksimit[i]);
                         if (beta <= alpha) {
-                            System.out.println("beta<=alfa, ei tutkita");
+                            //System.out.println("beta<=alfa, ei tutkita");
                             for (j = i + 1; j < 6; j++) {
-                                maksimit[j] = 1000;
+                                maksimit[j] = aliPuut[i].temp.evaluate();//1000;
                             }
-                            System.out.println("Palautetaan maksimit: " + Arrays.toString(maksimit));
+                            //System.out.println("Palautetaan maksimit: " + Arrays.toString(maksimit));
                             return maksimit;
                         }
 
-                        System.out.println("maksimitauluun kohtaan " + i + " tulee " + max);
+                        //System.out.println("maksimitauluun kohtaan " + i + " tulee " + max);
 
                     } else if (aliPuut[i].temp.uusiVuoro) {// && !aliPuut[i].temp.isGameOver() && (deapth-1)!=0) {
 
-                        System.out.println("\tSiirrolla saisi uuden vuoron, peli jatkuisi");
+                        //System.out.println("\tSiirrolla saisi uuden vuoron, peli jatkuisi");
 
-                        lisamaksimit = minimax(pelaaja, aliPuut[i].temp, alpha, beta);
+                        lisamaksimit = minimax(pelaaja, aliPuut[i].temp, deapth+1, alpha, beta);
 
                         //valitsee suurimman
                         for (j = 0; j < 6; j++) {
@@ -178,15 +189,15 @@ public class MiniMax {
                                 maksimit[i] = max;
                             }
                         }
-                        System.out.println("maksimitauluun kohtaan " + i + " tulee " + max);
+                        //System.out.println("maksimitauluun kohtaan " + i + " tulee " + max);
 
                         alpha = Math.max(alpha, maksimit[i]);
-                        System.out.println("beta<=alfa, ei tutkita");
+                        //System.out.println("beta<=alfa, ei tutkita");
                         if (beta <= alpha) {
                             for (j = i + 1; j < 6; j++) {
-                                maksimit[j] = 1000;
+                                maksimit[j] = aliPuut[i].temp.evaluate();//1000;
                             }
-                            System.out.println("Palautetaan maksimit: " + Arrays.toString(maksimit));
+                            //System.out.println("Palautetaan maksimit: " + Arrays.toString(maksimit));
                             return maksimit;
                         }
                     }
@@ -194,11 +205,11 @@ public class MiniMax {
                     max = -1000;
                     
                 } else if (siirto == 0) {
-                    System.out.println("\tSiirto kupista indeksillä " + (12 - i) + " ei olisi sallittu");
+                    //System.out.println("\tSiirto kupista indeksillä " + (12 - i) + " ei olisi sallittu");
                     maksimit[i] = 1000;
                 }
             }
-            System.out.println("lopulta palautetaan maksimit: " + Arrays.toString(maksimit));
+            //System.out.println("lopulta palautetaan maksimit: " + Arrays.toString(maksimit));
             return maksimit;
         }
 
@@ -206,18 +217,18 @@ public class MiniMax {
 
     public static void main(String[] args) {
         Board b = new Board();
-        //b.startBoard();
-        for (int i = 0; i < 14; i++) {
+        b.startBoard();
+        /*for (int i = 0; i < 14; i++) {
             b.lauta[i] = 0;
         }
         b.lauta[8] = 7;
         b.lauta[5] = 3;
         b.lauta[10] = 2;
         b.lauta[2] = 4;
-        b.printBoard();
+        b.printBoard();*/
         int pelaaja = 2;
         int[] minimaxPalauttaa;// machine;//=new int[6];
-        minimaxPalauttaa = minimax(pelaaja, b, -1000, 1000);
+        minimaxPalauttaa = minimax(pelaaja, b, 0, -1000, 1000);
         System.out.println(Arrays.toString(minimaxPalauttaa)); //ihmisen minmax -> [2, 2, 2, 2, 2, 6] eli ihminen maximoi mahdollisuutensa 
         //machine = minimax(pelaaja + 1, b);
         //System.out.println(Arrays.toString(machine));
