@@ -12,6 +12,7 @@ public class MiniMax {
      * lähtötilanteesta.
      * @param alpha 
      * @param beta
+     * @param deapth
      * @param pelaaja ihminen(1) tai tietokone(2)
      * @param lauta pelilauta, jolle minimax suoritetaan.
      * @return 6-paikkainen pistetaulu.
@@ -32,7 +33,7 @@ public class MiniMax {
         
         //loppu
         int[] pisteet=new int[6];
-        if(deapth==20 || lauta.isGameOver()){
+        if(deapth== 15|| lauta.isGameOver()){
             for(i=0; i<6;i++){
                     pisteet[i]=lauta.evaluate();
                 }
@@ -55,13 +56,11 @@ public class MiniMax {
 //------------------PELAAJA PALAUTTAA MINIMIT-----------------  
         if (pelaaja == 1) {          
             
-            //System.out.println("\tMahdolliset siirrot: " + Arrays.toString(aliPuunSiirrot));
             for (i = 0; i < 6; i++) {
                 
                 int siirto = aliPuunSiirrot[i];
 
                 if (siirto == 1) { //siirto sallittu //ENUM! 
-                    //System.out.println("siirto kupista indeksillä " + (i) + " on sallittu, tehdään siirto leikisti:");
 
                     aliPuut[i].teeSiirtoLeikisti(i, pelaaja); //päivittää aliPuut[i].temp -lautaa
 
