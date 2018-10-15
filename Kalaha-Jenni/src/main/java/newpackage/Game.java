@@ -38,12 +38,15 @@ public class Game {
 
                 board.uusiVuoro = false;
 
+                //Mitataan minimax-algoritmin suoritusaika.
                 long startTime = System.nanoTime();
 
                 maxpisteet = MiniMax.minimax(2, board, 0, -1000, 1000);
+                System.out.println("minimax palauttaa maksimipisteet: "+Arrays.toString(maxpisteet));
 
                 long endTime = System.nanoTime();
                 long duration = (endTime - startTime) / 1000000000;
+                
                 System.out.println("Minimax suorittamiseen meni " + duration + " sekuntia.");
 
                 koneSiirtää(board, maxpisteet);
@@ -52,10 +55,11 @@ public class Game {
                     break;
                 }
 
+                //Jos kone ei saa uutta vuoroa, siirtyy vuoro pelaajalle.
                 if (board.uusiVuoro) {
                     System.out.println("Saan uuden vuoron");
-                    Thread.sleep(1000);
-
+                    //Hidatetaan ohjelmaa, jotta pelaaja pystyy seuraamaan tulosteita.
+                    Thread.sleep(2000);
                 } else {
                     pelaaja = 1;
                 }
@@ -79,6 +83,7 @@ public class Game {
                     break;
                 }
 
+                //Jos pelaaja ei saa uutta vuoroa, siirtyy vuoro koneelle.
                 if (board.uusiVuoro) {
                     System.out.println("Saat uuden vuoron:");
                 } else {
@@ -92,8 +97,8 @@ public class Game {
     }
 
     /**
-     * Kysyy pelaajalta luvun, joka on joko 1 tai 0 ja arpoo pelin aloittajan.
-     * @return joko 1, jos arvottu aloittaja on pelaaja tai 2, jos aloittaja on tietokone
+     * Kysyy pelaajalta luvun, 1 tai 0 ja arpoo pelin aloittajan.
+     * @return 1, jos arvottu aloittaja on pelaaja tai 2, jos aloittaja on tietokone
      */
     public static int arvotaanAloittaja() {
 
@@ -101,10 +106,17 @@ public class Game {
 
         int aloittaja;
         Scanner input = new Scanner(System.in);
+        int pelaajanValinta;
+        pelaajanValinta= input.nextInt();
+        /*Integer.toString(pelaajanValinta);
+        
+        //tarkistetaan, että pelaajan antama syöte kelpaa
+        if(pelaajanValinta!=0 || pelaajanValinta!=1){
+                System.out.println("Voit valita vain 1 tai 0. \nValitse uudelleen:");
+            }*/
+        
 
-        int pelaajanValinta = input.nextInt();//gui.pelaajanLuku;//input.nextInt();
-        //System.out.println("Valitsit: " + pelaajanValinta);
-
+        //kone arpoo 1 tai 0 ja vertaa sitä pelaajan antamaan lukuun
         long luku = Math.round(Math.random());
         System.out.println("Kone arpoi: " + luku);
         if (luku != pelaajanValinta) {
@@ -116,31 +128,31 @@ public class Game {
         }
         return aloittaja;
     }
-
+    
     /**
-     *
+     * Kone valitsee siirron siitä kiposta, jolle lasketut pisteet on korkeimmat.
      * @param board on pelilauta, jolle siirto suoritetaan
      * @param makspisteet on minimax algoritmin palauttamat pisteet kullekin mahdolliselle siirrolle
      * @throws InterruptedException
      */
     public void koneSiirtää(Board board, int[] makspisteet) throws InterruptedException {
-        //kone siirtää siitä kiposta, jolle lasketut pisteet on korkeimmat
+        
         int koneSiirtaa = -1;
         int max = -1000;
         for (int r = 0; r < 6; r++) {
-            if (maxpisteet[r] > max && board.lauta[12 - r] != 0 && maxpisteet[r] != 1000) {//r + 7] != 0) {
+            if (maxpisteet[r] > max && board.lauta[12 - r] != 0 && maxpisteet[r]!=1000) {
                 max = maxpisteet[r];
                 koneSiirtaa = 12 - r;
             }
         }
 
-        //tehdään valittu siirto ja tulostetaan pelitilanne
+        //tehdään valittu siirto ja tulostetaan pelitilanne. (Tulosteiden esitystä hidastettu.)
         System.out.println("Kone siirtää kupista " + (koneSiirtaa - 6));
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         board.teeSiirtoOikeasti(koneSiirtaa, 2);
         System.out.println("Pelitilanne siirron jälkeen:");
         board.printBoard();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
     }
 
     /**
@@ -152,11 +164,12 @@ public class Game {
         System.out.println("Valitse siirtosi: ");
         int syote = input.nextInt();
 
+        //valinta yli/alle sallitun indeksin tai valittu tyhjä kippo
         while (syote > 6 || syote < 1 || board.lauta[syote - 1] == 0) {
             if (syote > 6 || syote < 1) {
                 System.out.println("Voit valita kipoista 1-6.\nValitse uudelleen:");
                 syote = input.nextInt();
-            }
+            }            
             if (board.lauta[syote - 1] == 0) {
                 System.out.println("Et voi tehdä siirtoa tyhjästä kiposta.\nValitse uudelleen.");
                 syote = input.nextInt();
@@ -166,7 +179,8 @@ public class Game {
     }
 
     /**
-     * Kun peli loppuu, tämä metodi laskee pelin pistetilanteen ja siirtää loput kivistä sen pelaajan mancalaan, jonka puolella kiviä vielä on. 
+     * Kun peli loppuu, tämä metodi laskee pelin pistetilanteen ja siirtää loput kivistä sen pelaajan mancalaan, 
+     * jonka puolella kiviä vielä on. 
      * 
      * @param board on pelilauta, jonka pistetilanne lasketaan. 
      * @throws InterruptedException
@@ -180,14 +194,14 @@ public class Game {
             board.lauta[12 - i] = 0;
         }
         System.out.println("Peli loppui!");
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         board.printBoard();
         Thread.sleep(1000);
 
         if (loppupisteet < 0) {
-            System.out.println("Loppupisteet: " + loppupisteet + " Voitit!");
+            System.out.println("Loppupisteet: " + loppupisteet + "\nVoitit!");
         } else if (loppupisteet > 0) {
-            System.out.println("Loppupisteet: " + loppupisteet + " Hävisit!");
+            System.out.println("Loppupisteet: " + loppupisteet + "\nHävisit!");
         } else {
             System.out.println("Tasapeli!");
         }

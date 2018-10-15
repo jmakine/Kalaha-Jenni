@@ -27,14 +27,6 @@ public class BoardTest {
     }
 
     /**
-     * Test of vastapuolenInd method, of class Board.
-     */
-    @Test
-    public void testVastapuolenIndToimii() {
-        assertEquals(b.vastapuolenInd(0), 12);
-    }
-
-    /**
      * Test of teeSiirtoOikeasti method, of class Board.
      */
     @Test
