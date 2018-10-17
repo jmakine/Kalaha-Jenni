@@ -5,22 +5,30 @@
  */
 package newpackage;
 
-import java.util.Scanner;
-
 /**
  * Luokassa Board on siirtojen suoritus sekä mahdollisten siirtojen simulointi.
  * Oikeat siirrot päivittävät varsinaisen pelilaudan asetelman, simuloiva siirto
- * päivittää väliaikaista "temp"-Boardia. Pelilaudan toiminnallisuus sääntöineen
- * on tässä luokassa.
+ * päivittää "temp"-Boardia. Pelilaudan säännöt sisältyvät tämän luokan metodeihin.
  *
  * @version 1.0.
  * @author Jenni
  */
 public class Board {
 
+    /**
+     *Pelilauta on 14-paikkainen lista.
+     */
     public int[] lauta;
     int viimeinenKiviInd;
+
+    /**
+     * Kertoo, saako ko laudalla uutta vuoroa.
+     */
     public boolean uusiVuoro;
+
+    /**
+     * Board-olion muuttuja, jolla simuloidaan siirtoja.
+     */
     public Board temp;
     
 
@@ -34,6 +42,9 @@ public class Board {
      */
     public static final int COMPUTER = 2;
 
+    /**
+     * Konstruktoi Board-olion.
+     */
     public Board() {
 
         this.lauta = new int[14];
@@ -52,7 +63,7 @@ public class Board {
 
 //---------TULOSTAA LAUDAN-----------------------------------------------------------------------  
     /**
-     * Tulostaa laudan sen hetkisen tilanteen.
+     * Tulostaa laudan tilanteen.
      */
     public void printBoard() {
         System.out.println 
@@ -73,14 +84,11 @@ public class Board {
      *
      * @param indeksi, johon siirto tehdään
      * @param pelaaja, jonka siirto on kyseessä
-     * @return true, jos siirto on sallittu
      */
-    Scanner input = new Scanner(System.in);
-
+    
     public void teeSiirtoOikeasti(int indeksi, int pelaaja) { 
 
         int kiviaKipossa = this.lauta[indeksi];
-        //int mancala;
 
         if (pelaaja == HUMAN) {
 
@@ -146,8 +154,13 @@ public class Board {
         }
 
     }
-    //------------------
+    
+//------------------OIKEASTI----------------------------------------
 
+    /**
+     *
+     * @param pelaaja
+     */
     public void viimeisenKivenToimenpiteet(int pelaaja) {
         int mancala;
         if (pelaaja == HUMAN) {
@@ -168,7 +181,12 @@ public class Board {
         }
     }
 
-    //-------------------
+//---------------------------SIMULAATIO--------------------------------------------------------
+    
+    /**
+     * Jos viimeinen kivi osuu mancalaan tai tyhjään omaan kippoon, suoritetaan asiaan kuuluvat toimenpiteet.
+     * @param pelaaja
+     */
     public void viimeisenKivenToimenpiteetLeikisti(int pelaaja) {
         int mancala;
         if (pelaaja == 1) {
@@ -270,10 +288,10 @@ public class Board {
 
 //---------LASKEE PELIN LOPPUPISTEET------------------------------------------------------------------------------- 
     /**
+     * Laskee pelilaudalle arvon.
      * @return palauttaa pelilaudan pistetilanteen + on tietokone johtaa/voitti,
      * - on pelaaja johtaa/voitti. Erotuksen suuruus vastaa lopputilanteen
-     * piste-eroa. Laskee pelitilanteen arvon, vaikkei peli olisi ohi. Silloin
-     * oman puolen kivet lasketaan omiksi pisteiksi.
+     * piste-eroa. 
      */
     public int evaluate() {
         int value;
@@ -388,6 +406,10 @@ public class Board {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         Board b = new Board();
         b.startBoard();

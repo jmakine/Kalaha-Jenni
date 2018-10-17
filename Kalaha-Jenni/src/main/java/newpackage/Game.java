@@ -39,16 +39,16 @@ public class Game {
                 board.uusiVuoro = false;
 
                 //Mitataan minimax-algoritmin suoritusaika.
-                long startTime = System.nanoTime();
+                //long startTime = System.nanoTime();
 
-                maxpisteet = MiniMax.minimax(2, board, 0, -1000, 1000);
-                System.out.println("minimax palauttaa maksimipisteet: "+Arrays.toString(maxpisteet));
+                maxpisteet = MiniMax.minimax(pelaaja, board, 0, -1000, 1000);
+                //System.out.println("minimax palauttaa maksimipisteet: "+Arrays.toString(maxpisteet));
 
-                long endTime = System.nanoTime();
-                long duration = (endTime - startTime) / 1000000000;
+                //long endTime = System.nanoTime();
+                //long duration = (endTime - startTime)/1000000;
                 
-                System.out.println("Minimax suorittamiseen meni " + duration + " sekuntia.");
-
+                //System.out.println("Minimax suorittamiseen meni " + duration + " millisekuntia.");
+                                
                 koneSiirtää(board, maxpisteet);
 
                 if (board.isGameOver()) {
@@ -58,9 +58,8 @@ public class Game {
                 //Jos kone ei saa uutta vuoroa, siirtyy vuoro pelaajalle.
                 if (board.uusiVuoro) {
                     System.out.println("Saan uuden vuoron");
-                    //Hidatetaan ohjelmaa, jotta pelaaja pystyy seuraamaan tulosteita.
-                    Thread.sleep(2000);
-                } else {
+                } 
+                else {
                     pelaaja = 1;
                 }
             }
@@ -74,7 +73,7 @@ public class Game {
 
                 int siirto = pelaajaValitseeSiirron(board);
 
-                board.teeSiirtoOikeasti(siirto, 1);
+                board.teeSiirtoOikeasti(siirto, pelaaja);
 
                 System.out.println("Pelitilanne siirron jälkeen: ");
                 board.printBoard();
@@ -100,26 +99,18 @@ public class Game {
      * Kysyy pelaajalta luvun, 1 tai 0 ja arpoo pelin aloittajan.
      * @return 1, jos arvottu aloittaja on pelaaja tai 2, jos aloittaja on tietokone
      */
-    public static int arvotaanAloittaja() {
+    public int arvotaanAloittaja() { //static
 
         System.out.println("Arvotaan aloittaja, valitse 1 tai 0");
 
         int aloittaja;
-        Scanner input = new Scanner(System.in);
-        int pelaajanValinta;
-        pelaajanValinta= input.nextInt();
-        /*Integer.toString(pelaajanValinta);
+        Scanner input1 = new Scanner(System.in);        
+        int valinta= input1.nextInt();
         
-        //tarkistetaan, että pelaajan antama syöte kelpaa
-        if(pelaajanValinta!=0 || pelaajanValinta!=1){
-                System.out.println("Voit valita vain 1 tai 0. \nValitse uudelleen:");
-            }*/
-        
-
         //kone arpoo 1 tai 0 ja vertaa sitä pelaajan antamaan lukuun
         long luku = Math.round(Math.random());
         System.out.println("Kone arpoi: " + luku);
-        if (luku != pelaajanValinta) {
+        if (luku != valinta) {
             aloittaja = 2;
             System.out.println("Tietokone aloittaa");
         } else {
@@ -206,5 +197,5 @@ public class Game {
             System.out.println("Tasapeli!");
         }
     }
-
+    
 }

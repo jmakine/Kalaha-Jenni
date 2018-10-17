@@ -144,9 +144,9 @@ public class BoardTest {
         for (int i = 0; i < 8; i++) {
             pelaajanPisteet += c.lauta[i];
         }
-        int koneenPisteet = 23;
-        int resultB = b.evaluate();
-        assertEquals(0, resultB);
+        //int koneenPisteet = 23;
+        int arvo = b.evaluate();
+        assertEquals(0, arvo);
         assertEquals(pelaajanPisteet, 24);
         assertEquals(3, c.lauta[6]); 
     }
