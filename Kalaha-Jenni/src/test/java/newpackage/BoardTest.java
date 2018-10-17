@@ -105,8 +105,8 @@ public class BoardTest {
         System.out.println("\tTemp-lauta siirron jälkeen: ");
         c.temp.printBoard();
         System.out.println("temp-lauta: " + Arrays.toString(c.temp.lauta));
-        assertEquals(c.temp.lauta[9], 0);
-        assertEquals(c.temp.isGameOver(), true);
+        assertEquals(c.temp.lauta[9], 1);
+        assertEquals(c.temp.isGameOver(), false);
         
         //Pelaajan vuoro, peli päättyy      
         for (int i = 0; i < 14; i++) {
@@ -121,8 +121,8 @@ public class BoardTest {
         c.teeSiirtoLeikisti(4, 1);
         System.out.println("\tTemp-lauta siirron jälkeen: ");
         c.temp.printBoard();
-        assertEquals(c.temp.lauta[5], 0);
-        assertEquals(c.temp.isGameOver(), true);
+        assertEquals(c.temp.lauta[5], 1);
+        assertEquals(c.temp.isGameOver(), false);
 
     }
 
